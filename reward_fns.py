@@ -28,7 +28,7 @@ def __reward_fn(T, P):
         res.append(rew)
     return res
 
-def __reward_fn(T, P):
+def __reward_fn_1(T, P):
     res = []
     rew = 0.0
     for t, p in zip(T, P):
@@ -49,4 +49,5 @@ def __reward_fn(T, P):
         res.append(rew)
     return res
 
-RFNS = [RewardFn("test_fn", __reward_fn)]
+RFNS = [ RewardFn("test_fn", __reward_fn)
+       , RewardFn("test_fn2", __reward_fn_1) ]

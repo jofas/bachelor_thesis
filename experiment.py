@@ -96,14 +96,14 @@ class Experiment:
             for i, exp in enumerate(self.exps):
                 lw_i = int(i / lw)
                 if lw > 1:
-                    up_i = i - lw_i
+                    up_i = i - lw_i * lw
                     self._plot(axs[lw_i, up_i], exp)
                 else:
                     self._plot(axs[lw_i], exp)
         plt.show()
 
     def _plot(self, ax, exp):
-        ax.set_title(exp.label)
+        ax.set_title(exp.label + " " + exp.label_rf)
 
         for pts, label in exp.points:
             ax.plot(pts[:,0], pts[:,1], label=label)
