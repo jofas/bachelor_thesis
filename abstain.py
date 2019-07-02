@@ -93,7 +93,9 @@ class AbstainClassifier:
 
     # _reward_calc {{{
     def _reward_calc(self, A):
-        def scale_r(x, mn, mx): return (x - mn) / (mx - mn)
+        def scale_r(x, mn, mx):
+            return (x - mn) / (mx - mn) if (mx - mn) > 0 \
+                else x
 
         A = np.array(sorted(A, key=lambda x: x[-1]))
 
