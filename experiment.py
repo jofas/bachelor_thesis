@@ -37,10 +37,11 @@ class Experiment:
     def start(self):
         train = int(len(self.X) * (1 - self.ratio))
 
-        for clf in self.clfs:
+        for clf_proto in self.clfs:
             for rw_fn in self.rw_fns:
+                clf_instance = clf_proto()
                 abstain = AbstainClassifier(
-                    clf, rw_fn, self.regs
+                    clf_instance, rw_fn, self.regs
                 )
 
                 self.exps.append(abstain.experiment)
@@ -49,7 +50,7 @@ class Experiment:
                     self.X[:train], self.y[:train]
                 )
 
-                print(clf.label, rw_fn.label)
+                print(clf_instance.label, rw_fn.label)
                 abstain.score(
                     self.X[train:], self.y[train:]
                 ).stdout()
@@ -83,23 +84,19 @@ class Experiment:
         except FileExistsError: pass
 
     def plot(self):
-        lw = math.floor(math.sqrt(len(self.exps)))
+        rows, cols = len(self.clfs), len(self.rw_fns)
 
-        up = lw + 1 if lw ** 2 < len(self.exps) \
-            else lw
+        fig, axs = plt.subplots(
+            rows, cols, figsize=(rows*6.4, cols*4.8)
+        )
 
-        fig, axs = plt.subplots(lw, up)
-
-        if lw == 1 and up == 1:
+        if rows == 1 and cols == 1:
             self._plot(axs, self.exps[0])
         else:
-            for i, exp in enumerate(self.exps):
-                lw_i = int(i / lw)
-                if lw > 1:
-                    up_i = i - lw_i * lw
-                    self._plot(axs[lw_i, up_i], exp)
-                else:
-                    self._plot(axs[lw_i], exp)
+            axs = np.reshape(axs, (-1,))
+            for i, ax in enumerate(axs):
+                self._plot(ax, self.exps[i])
+
         plt.show()
 
     def _plot(self, ax, exp):

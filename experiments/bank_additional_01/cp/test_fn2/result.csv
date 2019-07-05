@@ -1,7 +1,0 @@
-Regressor;Reward;Rejected
-bare;1.0;0.75
-GP [1e-3, 1];1.0;0.875
-GP [1e-1,1];1.0;0.75
-GP [1,2];0.0;0.125
-SVR RBF C100;1.0;0.75
-SVR RBF C1;1.0;0.75

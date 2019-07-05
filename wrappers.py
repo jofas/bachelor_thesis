@@ -1,3 +1,5 @@
+import numpy as np
+
 class ScoringClassifier:
     def __init__(self, label, train, predict, score):
         self.label   = label
@@ -12,10 +14,16 @@ class Regressor:
         self.T     = 0.0
 
 class RewardFn:
-    def __init__(self, label, reward_fn):
-        self.label     = label
-        self.reward_fn = reward_fn
+    def __init__(self, label, gain, loss):
+        self.label = label
+        self.gain  = gain
+        self.loss  = loss
 
     def __call__(self, T, P):
-        return self.reward_fn(T, P)
-
+        res = []
+        rew = 0.0
+        for t, p in zip(T, P):
+            rew += self.gain(t, p) \
+                 - self.loss(t, p)
+            res.append(rew)
+        return np.array(res)

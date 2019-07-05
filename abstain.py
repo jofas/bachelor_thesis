@@ -1,5 +1,7 @@
 import numpy as np
 from sklearn.model_selection import KFold
+import math
+from infinity import inf
 
 class AbstainClassifier:
     def __init__(
@@ -94,8 +96,15 @@ class AbstainClassifier:
     # _reward_calc {{{
     def _reward_calc(self, A):
         def scale_r(x, mn, mx):
-            return (x - mn) / (mx - mn) if (mx - mn) > 0 \
-                else x
+            try:
+                s = (x - mn) / (mx - mn)
+                if math.isnan(s) or math.isinf(s):
+                    print("s nan or inf:", s, x, mn, mx)
+                    return 1.0
+                return s
+            except:
+                print("scaling impossible:", x, mn, mx)
+                return 1.0
 
         A = np.array(sorted(A, key=lambda x: x[-1]))
 
@@ -122,6 +131,17 @@ class AbstainClassifier:
 
         rew_pts = np.array([[s, scale_r(r,min_rew,max_rew)]
             for s, r in rew_pts])
+
+        #print(rew_pts)
+
+        #l0 = len(rew_pts)
+
+        #rew_pts = np.array([[s, r] for s, r in rew_pts
+        #    if not math.isnan(s) and not math.isnan(r)
+        #    and not math.isinf(s) and not math.isinf(r)])
+
+        #if l0 > len(rew_pts):
+        #    print("removed elements!!!", l0, len(rew_pts))
 
         return T, rew_pts
     # }}}

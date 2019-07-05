@@ -21,4 +21,4 @@ def __rf_scorer():
         [1 - max(row) for row in rf.predict_proba(X)]
     return ScoringClassifier("rf", train, predict, score)
 
-CLFS = [__cp_scorer(), __rf_scorer()]
+CLFS = [__cp_scorer, __rf_scorer]
