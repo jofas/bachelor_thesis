@@ -27,3 +27,21 @@ class RewardFn:
                  - self.loss(t, p)
             res.append(rew)
         return np.array(res)
+
+class RewardFnAbstain:
+    def __init__(self, label, gain, loss, abstain):
+        self.label   = label
+        self.gain    = gain
+        self.loss    = loss
+        self.abstain = abstain
+
+    def __call__(self, T, P):
+        res = []
+        rew = 0.0
+
+        for i, (t, p) in enumerate(zip(T, P)):
+            rew += self.gain(t, p) \
+                 - self.loss(t, p) \
+                 - self.abstain(len(T) - (i + 1))
+            res.append(rew)
+        return np.array(res)

@@ -29,6 +29,10 @@
     matrix
 }
 
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\def\ds{\Lbag z_1,\dots,z_n \Rbag}
+
 \begin{document}
 % titlepage {{{
 \begin{titlepage}
@@ -102,6 +106,7 @@ Overath, July 2019
 %\begin{keywords}
 %\end{keywords}
 
+% Introduction {{{
 \section{Introduction}
 
 An abstaining classifier
@@ -140,7 +145,8 @@ characteristic (ROC) rule
 The method presented in this thesis is more flexible than
 the methods based on the ROC rule and can---depending on
 the context of the classification problem---produce results
-better interpretable (see Chapter~\ref{sec:example}).
+better interpretable than results from a cost setting
+(see Chapter~\ref{sec:example}).
 Also it is more natural with multi-class classification
 problems than the methods based on the ROC rule, all
 assuming binary classification problems, wherefore the
@@ -155,17 +161,36 @@ This thesis first presents a motivational example.
 In Chapter~\ref{sec:method} the proposed method is
 presented.
 After that experiments on data sets from the UCI machine
-learning repository are discussed \citep[see][]{uci}.
+learning repository \citep[see][]{uci} are discussed.
 At last further research ideas are listed and a conclusion
 is drawn.
+% }}}
 
+% Motivational example {{{
 \section{Motivational example}
 \label{sec:example}
+
+This chapter will point out the usefulness of abstaining
+classifiers in real world application domains where
+reliability is key.
+It will show an example why the reward setting can improve
+readability in some domains.
+First another example, for which the cost setting---more
+commonly used in supervised learning---comes more natural
+is given and the differences are discussed.
+
 Abstaining classifiers---compared to typical classifiers,
-which classify every prediction---can be easily
-integrated into processes where they partially replace the
-decision making, since they can delegate the abstained
-predictions back to the underlying process.
+which classify every prediction, maybe even without a
+confidence value in it (then called a bare
+prediction)---can be easily integrated into and enhance
+processes where they partially replace some of the decision
+making, since they can delegate the abstained predictions
+back to the underlying process.
+The use of abstaining classifiers in domains where
+reliability---in regard to prediction errors---is
+important, has an interesting aspect in giving
+reliability while still being able to decrease work, cost,
+etc.\ to some degree.
 This is a valuable property if there does not exist a
 typical classifier good enough to fully replace the
 underlying process.
@@ -175,13 +200,19 @@ classifiers can express a cost function associated to the
 decisions about predicting and abstaining of the
 classifier---which then chooses the threshold with which it
 produces the least amount of cost, therefore minimizing
-the cost.
+the cost of introducing the abstaining classifier to the
+process.
 
 For example, the real world application domain could be a
 facial recognition system at a company which regulates
 which employee can enter a trust zone and which can not.
-In this example, the cost for miss-classifying an
-unauthorized person as authorized can have huge costs for
+The process which should be enhanced with the facial
+recognition system is a manual process where the employee
+has to fill out a form in order to receive a key which
+opens the trust zone.
+
+In this example, the costs of miss-classifying an
+unauthorized person as authorized can be huge for
 the company while abstaining or classifying an authorized
 employee as unauthorized produces quite low costs---the
 authorized employee just has to start the manual process,
@@ -197,8 +228,8 @@ where we often can associate a certain amount of money an
 abstaining classifier can produce or safe by supporting the
 decision making of an underlying process.
 
-An example for such a process would be a bank which wants
-to grand a consumer credit.
+An example for such a process would be the process of a
+bank for granting a consumer credit.
 The bank requests information about the consumer from a
 credit bureau in order to assess the consumer's credit
 default risk.
@@ -231,9 +262,92 @@ Otherwise the abstaining classifier would produce more
 cost than it would save and it is not valuable for the
 bank to introduce it to its process of assessing a
 consumer's credit default risk.
+% }}}
 
-\section{Proposed method based on a reward function}
+% Proposed method based on reward {{{
+\section{Proposed method based on reward}
 \label{sec:method}
+
+Let $\textbf{X}$ be our observation space and $\textbf{Y}$
+our label space. $|\textbf{Y}| < \infty$ since only
+classification is discussed. Let $\textbf{Z}$ be the
+cartesian product of $\textbf{X}$ and $\textbf{Y}$:
+$\textbf{Z} := \textbf{X} \times \textbf{Y}$.
+$\textbf{Z}$ is called the example space.
+Let an example $z_i$ from $\textbf{Z}$ be:
+$z_i := (x_i, y_i); z_i \in \textbf{Z}$.
+A data set\footnote{not an actual set but a multi-set since
+it can contain the same element more often than one time.}
+containing examples $z_1,\dots,z_n$ is annotated as
+$\ds$.
+
+A classical machine learning predictor---in the previous
+chapter called a typical classifier---can be represented
+as a function:
+\begin{align}
+  \label{eq:D}
+  D: \textbf{Z}^* \times \textbf{X} \rightarrow \textbf{Y}.
+\end{align}
+Its first argument being a data set with an arbitrary
+length the classifier is trained on, while the second is an
+observation which should be predicted
+(mapped to a label from $\textbf{Y}$).
+
+Let $D_{\ds}$ be a classical machine
+learning predictor trained on the data set $\ds$ and
+let $D_{\ds}(x)$ be equivalent to (\ref{eq:D}).
+
+The proposed method relies on scoring classifiers.
+A scoring classifier does not return just
+a label but instead returns some score for each label from
+our label space.
+The only constraint on the scores is that higher scores
+are better than lower.
+A score could be a probability or just an uncalibrated
+confidence value \citep[see][]{vanderlooy_et_al_2009}.
+
+Let $S$ be a scoring classifier:
+\begin{align*}
+  S: \textbf{Z}^* \times \textbf{X} \rightarrow
+     (\textbf{Y} \rightarrow \mathbb{R}).
+\end{align*}
+$S$ takes the same arguments as (\ref{eq:D}) but instead
+of producing bare predictions it returns a function which
+maps every label from the label space to a score
+determined by $S$.
+
+The method proposed is only interested in the highest
+score and the associated label. For that two functions
+$k$ and $v$ are defined:
+\begin{align*}
+  k(S_{\ds}, x) &= \argmax_{y \in \textbf{Y}}
+    S_{\ds}(x)(y) \\
+  v(S_{\ds}, x) &= \max_{y \in \textbf{Y}}
+    S_{\ds}(x)(y).
+\end{align*}
+
+The composition $kv$ of $k$ and $v$ returns the tuple with
+the label mapped to the highest score:
+\begin{align*}
+  kv(S_{\ds}, x) = (k(S_{\ds}, x), v(S_{\ds}, x)).
+\end{align*}
+
+% relation to reinforcement learning
+%The whole idea
+% meta architecture
+%The idea
+
+%The proposed method relies on an meta architecture
+%comparable to the one described in
+%\citet{smirnov_et_al_2009}.
+
+%The authors define
+
+% reward function
+
+% algorithm
+
+% }}}
 
 \section{Experiments}
 

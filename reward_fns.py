@@ -2,7 +2,7 @@ import numpy as np
 import math
 import random
 
-from wrappers import RewardFn
+from wrappers import RewardFn, RewardFnAbstain
 
 __ASYM_MAT50 = \
     np.array([
@@ -46,6 +46,9 @@ __ASYM_MAT1000 = \
         [774, 656, 312, 996, 956, 346, 603, 438, 232, 504]
     ])
 
+def simple_abstain(amount):
+    return amount
+
 def simple_gain(t, p):
     return 1.0 if t == p else 0.0
 
@@ -75,6 +78,47 @@ def asym_loss200(t, p):
 
 def asym_loss1000(t, p):
     return 0.0 if t == p else __ASYM_MAT1000[int(p),int(t)]
+
+RFNS2 = [
+    RewardFn(
+        "random_gain",
+        random_gain,
+        random_loss,
+    ),
+    RewardFn(
+        "random_gain_scaled_1_5",
+        lambda t, p: 5.0 * random_gain(t, p),
+        lambda t, p: 5.0 * random_loss(t, p),
+    ),
+    RewardFn(
+        "random_gain_scaled_1_20",
+        lambda t, p: 20.0 * random_gain(t, p),
+        lambda t, p: 20.0 * random_loss(t, p),
+    ),
+    RewardFn(
+        "random_gain_scaled_1_100",
+        lambda t, p: 100.0 * random_gain(t, p),
+        lambda t, p: 100.0 * random_loss(t, p),
+    ),
+    RewardFnAbstain(
+        "asymetric_50_abstain",
+        asym_gain50,
+        asym_loss50,
+        simple_abstain,
+    ),
+    RewardFnAbstain(
+        "asymetric_200_abstain",
+        asym_gain200,
+        asym_loss200,
+        simple_abstain,
+    ),
+    RewardFnAbstain(
+        "asymetric_1000_abstain",
+        asym_gain1000,
+        asym_loss1000,
+        simple_abstain,
+    ),
+]
 
 RFNS = [
     RewardFn("simple", simple_gain, simple_loss),
