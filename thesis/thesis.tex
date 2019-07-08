@@ -32,6 +32,10 @@
 \DeclareMathOperator*{\argmax}{arg\,max}
 
 \def\ds{\Lbag z_1,\dots,z_n \Rbag}
+\def\X{\textbf{X}}
+\def\Y{\textbf{Y}}
+\def\Z{\textbf{Z}}
+\def\S{\textbf{S}_{\Z}}
 
 \begin{document}
 % titlepage {{{
@@ -108,6 +112,7 @@ Overath, July 2019
 
 % Introduction {{{
 \section{Introduction}
+\label{sec:intro}
 
 An abstaining classifier
 \citep[see e.g.][]{vanderlooy_et_al_2009}---also called a
@@ -125,7 +130,7 @@ This thesis introduces a new kind of method for
 approximating the optimal threshold based on a reward
 function---better known from reinforcement learning than
 from the supervised learning setting
-\citep[see e.g.][]{sutton_et_al_2018}.
+\citep[see e.g.][Chapter 1]{sutton_et_al_2018}.
 The method treats the reward function as unknown, making it
 a very general approach and giving quite the amount of
 freedom in designing the reward function.
@@ -281,9 +286,11 @@ it can contain the same element more often than one time.}
 containing examples $z_1,\dots,z_n$ is annotated as
 $\ds$.
 
+\subsection{Scoring classifiers}
+
 A classical machine learning predictor---in the previous
 chapter called a typical classifier---can be represented
-as a function:
+by a function
 \begin{align}
   \label{eq:D}
   D: \textbf{Z}^* \times \textbf{X} \rightarrow \textbf{Y}.
@@ -295,7 +302,8 @@ observation which should be predicted
 
 Let $D_{\ds}$ be a classical machine
 learning predictor trained on the data set $\ds$ and
-let $D_{\ds}(x)$ be equivalent to (\ref{eq:D}).
+let $D_{\ds}(x)$ be equivalent to (\ref{eq:D}) with the
+first argument being $\ds$.
 
 The proposed method relies on scoring classifiers.
 A scoring classifier does not return just
@@ -307,10 +315,11 @@ A score could be a probability or just an uncalibrated
 confidence value \citep[see][]{vanderlooy_et_al_2009}.
 
 Let $S$ be a scoring classifier:
-\begin{align*}
+\begin{align}
+  \label{eq:S}
   S: \textbf{Z}^* \times \textbf{X} \rightarrow
      (\textbf{Y} \rightarrow \mathbb{R}).
-\end{align*}
+\end{align}
 $S$ takes the same arguments as (\ref{eq:D}) but instead
 of producing bare predictions it returns a function which
 maps every label from the label space to a score
@@ -328,33 +337,248 @@ $k$ and $v$ are defined:
 
 The composition $kv$ of $k$ and $v$ returns the tuple with
 the label mapped to the highest score:
-\begin{align*}
+\begin{align}
+  \label{eq:kv}
   kv(S_{\ds}, x) = (k(S_{\ds}, x), v(S_{\ds}, x)).
+\end{align}
+
+\subsection{Abstaining classifiers}
+
+An abstaining classifier $A$ can be defined as a similar
+function as (\ref{eq:D}), with the only difference being
+the return value:
+\begin{align*}
+  A: \textbf{Z} \times \textbf{X} \rightarrow
+      \textbf{Y} \cup \{\bot\}
 \end{align*}
+$A$ can return a label from $\textbf{Y}$, but also $\bot$,
+indicating that $A$ would like to abstain from making a
+prediction.
 
-% relation to reinforcement learning
-%The whole idea
-% meta architecture
-%The idea
+Let $\S$ be the set of all scoring classifiers defined like
+(\ref{eq:S}) on the example set $\Z$.
+The proposed method is interested in transforming a
+scoring classifier $S \in \S$ to an abstaining classifier
+$A$.
+In order to do that a threshold $T \in \mathbb{R}$ is
+defined and $A$ can be represented as a composition of $S$
+and $T$.
+Let $S_\ds$ be a scoring classifier, $T$ a threshold and
+$x$ an observation to be predicted.
+The abstaining classifier $A$ composed of $S_{\ds}$ and $T$
+predicts $x$ as follows:
+\begin{align*}
+  A(\ds, x) =
+    \begin{cases}
+      k(S_{\ds}, x) &\qquad \text{if } v(S_{\ds}, x) > T \\
+      \bot &\qquad \text{if } v(S_{\ds}, x) \leq T
+    \end{cases}.
+\end{align*}
+This representation of $A$ is rather unconventional and
+is one reason the proposed method is unstable.
 
-%The proposed method relies on an meta architecture
-%comparable to the one described in
-%\citet{smirnov_et_al_2009}.
+Using a single threshold for all labels is a strong
+constraint to put onto the scoring classifier, because it
+must be invariant to the label distribution.
+Imagine a binary problem $\textbf{Y} = \{P, N\}$, where
+$P$ is the positive label and $N$ the negative.
+Now, $P$ makes up 90 percent of all examples and the
+scoring classifier is not invariant to the label
+distribution.
+This could lead the classifier to produce higher scores for
+$P$ than for $N$ which could result in an abstaining
+classifier that does not predict on any example with the
+label $N$, even though with such a distribution predicting
+$N$ would probably be more interesting.
 
-%The authors define
+ROC based and other methods for generating abstaining
+classifiers address this problem by using abstention
+windows instead of a single threshold
+\citep[see][]{friedel_et_al_2006}.
 
-% reward function
+The margin $m: \Y \times \mathbb{R} \rightarrow (-1,1)$ is
+a function that combines the label with the confidence
+value and returns a number in the interval of $(-1,1)$.
+The closer the return value of $m$ is to the edges, the
+more confident the scoring classifier is, whereby -1 means
+perfectly confident the label is $N$ and 1 means perfectly
+confident the label is $P$
+\citep[see][]{friedel_et_al_2006}.
 
-% algorithm
+In \citet{guan_et_al_2018} a similar method is described,
+constraining the output of the margin $m$ not on $(-1,1)$
+but instead using only the likelihood of an observation $x$
+having the positive label $P$
+($m: \mathbb{R} \rightarrow (0,1)$).
+
+Both \citet{friedel_et_al_2006} and \citet{guan_et_al_2018}
+define an abstention window $a$ as a tuple
+$a := (t_1, t_2); t_1 < t_2$ with two thresholds.
+An abstaining classifier with an abstention window
+instead of a threshold predicts an observation $x$ as:
+\begin{align*}
+  A(\ds, x) =
+    \begin{cases}
+      P    &\qquad \text{if } m(kv(S_{\ds}, x)) > t_2 \\
+      \bot &\qquad \text{if }
+            t_1 \leq m(kv(S_{\ds}, x)) \leq t_2 \\
+      N    &\qquad \text{if } m(kv(S_{\ds}, x)) < t_1 \\
+    \end{cases}.
+\end{align*}
+This addresses the problem of using a single threshold $T$
+for predictions on both labels from $\Y$.
+The constraint of abstention windows is that they are only
+defined on binary problems, while an arbitrary number of
+labels can be predicted with a single threshold.
+
+This thesis does not address the problem of using a single
+threshold, but a possible solution is given in
+Chapter~\ref{sec:further_research}.
+
+\subsection{Abstaining classifiers from reward}
+
+The novel approach of this thesis is using a system based
+on reward which is maximized rather then cost that is
+minimized in order to determine the optimal threshold for
+abstention.
+Like stated in Chapter~\ref{sec:intro} using a reward
+function---like used in reinforcement learning---in a
+supervised learning setting is rather uncommon.
+In Chapter~\ref{sec:intro} and Chapter~\ref{sec:example}
+the reasons why using reward instead of cost are given.
+
+An aspect of cost---which makes it less flexible than
+reward---is that it is only defined on $\mathbb{R}^+$,
+while reward is defined on $\mathbb{R}$.
+Reward combines cost with gain.
+
+Let $\rho$ be a reward function:
+\begin{align*}
+  \rho: \Y^* \times \Y^* \rightarrow \mathbb{R}^*.
+\end{align*}
+$\rho$ takes two arbitrary long vectors with labels from
+$\Y$.
+The first vector contains the true labels of some sequence
+of examples, the second contains the predicted labels from
+a scoring classifier $S$ for the same sequence.
+The sequence of examples is ordered after the scores
+produced by $S$ in descending order.
+$\rho$ returns a vector of rewards for each tuple of true
+label and predicted label.
+
+The reward function is basically treated as a black box
+function, the only knowledge we have is, whether $\rho$
+produces single-step reward or accumulated reward values.
+
+Treating the reward function this way makes it much more
+flexible than the cost setting which uses cost matrices
+\citep[see][]{fisher_et_al_2016}. A cost matrix $C$ for a
+binary abstaining classifier is defined as
+\begin{align*}
+  C :=
+    \begin{pmatrix}
+      C(P, P) &C(P, N) &C(P, \bot) \\
+      C(N, P) &C(N, N) &C(N, \bot) \\
+    \end{pmatrix}
+\end{align*}
+and is basically the inverse of a single step reward
+function---with the difference that $C(P, P)$ and $C(N, N)$
+normally do not have a gain associated to them, because
+then the cost matrix would not be true to its cost
+setting. A cell of $C$ would provide a gain if its value
+is smaller than zero.
+
+A reward function that accumulates provides an even more
+flexible setting than single step reward---which is only
+dependent on one example's true and predicted
+label---because it can introduce the concept of state
+\citep[see][Chapter 1]{sutton_et_al_2018}.
+
+For example, our classifier could be a bettor betting on
+the outcome of a card game.
+It starts with a certain amount of money and always bets
+two thirds of its amount.
+Every example is one match and it is possible to derive a
+certainty measure based on some information about the
+match.
+The reward is the amount of money the classifier wins or
+loses.
+It gains a certain amount---depending on how much money the
+classifier owns after the last match it has bet on---if
+it decides to bet on the current match and does so
+correctly or loses two thirds of its reward if the
+classifier was wrong.
+A reward function like this is not stateless like a
+single step reward function and is a classical alternative
+to it in reinforcement learning
+\citep[see][Chapter 1]{sutton_et_al_2018}.
+
+The idea now is to find a threshold with which the
+expected reward is maximized.
+
+\begin{algorithm}
+  \caption{: k-fold method for determining the threshold
+             for an abstaining classifier based on reward}
+  \label{alg:method}
+
+  \textbf{Input:}
+
+  \quad $S$: a socring classifier,
+
+  \quad $\rho$: a reward function,
+
+  \quad data set: $\ds$,
+
+  \quad $k$: the amount of partitions,
+
+  \quad $R$: a regressor (optionally)
+
+  \textbf{Output:}
+
+  \quad T: threshold
+
+  \begin{algorithmic}[1]
+    \STATE{predicted points := $\{\}$}
+    \STATE{split data set into $k$ roughly equal sized
+           partitions $\text{split}_1,\dots,
+           \text{split}_k$}
+    \FORALL{$\text{split}_i, i=1,\dots,k$}
+      \STATE{combine all $\text{split} \neq
+             \text{split}_i$ to the training set}
+      \STATE{train $S$ with the training set}
+      \STATE{let $S$ predict examples in $\text{split}_i$}
+      \FORALL{elements in prediction of $S$}
+        \STATE{get the label associated with the highest
+              score for the element with (\ref{eq:kv})}
+        \STATE{add the label and score to predicted points}
+      \ENDFOR
+    \ENDFOR
+    \STATE{sort predicted points based on the score in
+           descending order}
+    \STATE{compute the rewards with the true label and the
+           predicted label from the predicted points}
+    \STATE{reward points := scores from predicted points
+           $\times$ rewards}
+    \STATE{reduce reward points so all scores are unique}
+    \STATE{train $R$ (optionally)}
+    \STATE{T := $\argmax R$ or just the score which has
+           the highest reward associated}
+    \RETURN{$T$}
+  \end{algorithmic}
+\end{algorithm}
+
+\subsection{Equivalences to reinforcement learning}
 
 % }}}
 
 \section{Experiments}
+\label{sec:experiments}
 
 %\section{Other methods for abstaining}
 %\label{sec:abs_methods}
 
 \section{Further research}
+\label{sec:further_research}
 
 \section{Conclusion}
 
