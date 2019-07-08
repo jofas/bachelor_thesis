@@ -380,22 +380,24 @@ is one reason the proposed method is unstable.
 Using a single threshold for all labels is a strong
 constraint to put onto the scoring classifier, because it
 must be invariant to the label distribution.
-Imagine a binary problem $\textbf{Y} = \{P, N\}$, where
-$P$ is the positive label and $N$ the negative.
-Now, $P$ makes up 90 percent of all examples and the
-scoring classifier is not invariant to the label
-distribution.
+Imagine a classification problem where one label makes up
+90 percent of all examples and the scoring classifier is
+not invariant to the label distribution.
 This could lead the classifier to produce higher scores for
-$P$ than for $N$ which could result in an abstaining
-classifier that does not predict on any example with the
-label $N$, even though with such a distribution predicting
-$N$ would probably be more interesting.
+observations with the label which makes up 90 percent.
+This could result in an abstaining classifier that does not
+predict an any example which does not have the dominant
+label, even though with such a distribution predicting
+the submissive labels would probably be more interesting.
 
 ROC based and other methods for generating abstaining
 classifiers address this problem by using abstention
 windows instead of a single threshold
 \citep[see][]{friedel_et_al_2006}.
 
+Let $\Y$ be a binary problem $\Y := \{P, N\}$,
+where $P$ is called the positive label and $N$ the
+negative label.
 The margin $m: \Y \times \mathbb{R} \rightarrow (-1,1)$ is
 a function that combines the label with the confidence
 value and returns a number in the interval of $(-1,1)$.
@@ -428,11 +430,26 @@ instead of a threshold predicts an observation $x$ as:
 This addresses the problem of using a single threshold $T$
 for predictions on both labels from $\Y$.
 The constraint of abstention windows is that they are only
-defined on binary problems, while an arbitrary number of
-labels can be predicted with a single threshold.
+defined on binary problems and must be transformed in order
+to use them in a multi-class setting.
+This could be done with the one-vs-one or the one-vs-all
+approach, in which multiple binary classifiers are learned
+\citep[see e.g.][Chapter 14.5]{murphy_2012}.
+But, like stated in \citet{friedel_2005} multi-class
+problems increase the complexity of ROC based and other
+methods, because when using a one-vs-one or one-vs-all
+approach it is possible that more than one label gets
+predicted by the abstaining classifier
+\citep[see][]{friedel_2005}.
+On the other hand an arbitrary number of labels can be
+predicted with a single threshold, though the solution
+could be sub-optimal and is depending heavily on the
+underlying scoring classifier.
 
 This thesis does not address the problem of using a single
-threshold, but a possible solution is given in
+threshold in the empirical
+study presented in Chapter~\ref{sec:experiments}, but a
+possible solution is given in
 Chapter~\ref{sec:further_research}.
 
 \subsection{Abstaining classifiers from reward}
@@ -555,8 +572,9 @@ expected reward is maximized.
     \ENDFOR
     \STATE{sort predicted points based on the score in
            descending order}
-    \STATE{compute the rewards with the true label and the
-           predicted label from the predicted points}
+    \STATE{rewards := $\rho$ with the true label and the
+           predicted label from the predicted points as
+           arguments}
     \STATE{reward points := scores from predicted points
            $\times$ rewards}
     \STATE{reduce reward points so all scores are unique}
