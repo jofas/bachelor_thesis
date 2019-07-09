@@ -30,6 +30,7 @@
 }
 
 \DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
 
 \def\ds{\Lbag z_1,\dots,z_n \Rbag}
 \def\X{\textbf{X}}
@@ -367,13 +368,14 @@ Let $S_\ds$ be a scoring classifier, $T$ a threshold and
 $x$ an observation to be predicted.
 The abstaining classifier $A$ composed of $S_{\ds}$ and $T$
 predicts $x$ as follows:
-\begin{align*}
+\begin{align}
+  \label{eq:A}
   A(\ds, x) =
     \begin{cases}
       k(S_{\ds}, x) &\qquad \text{if } v(S_{\ds}, x) > T \\
       \bot &\qquad \text{if } v(S_{\ds}, x) \leq T
     \end{cases}.
-\end{align*}
+\end{align}
 This representation of $A$ is rather unconventional and
 is one reason the proposed method is unstable.
 
@@ -401,10 +403,10 @@ negative label.
 The margin $m: \Y \times \mathbb{R} \rightarrow (-1,1)$ is
 a function that combines the label with the confidence
 value and returns a number in the interval of $(-1,1)$.
-The closer the return value of $m$ is to the edges, the
-more confident the scoring classifier is, whereby -1 means
-perfectly confident the label is $N$ and 1 means perfectly
-confident the label is $P$
+The closer the return value of $m$ is to the edges of the
+interval, the more confident the scoring classifier is,
+whereby -1 means perfectly confident the label is $N$ and 1
+means perfectly confident the label is $P$
 \citep[see][]{friedel_et_al_2006}.
 
 In \citet{guan_et_al_2018} a similar method is described,
@@ -416,8 +418,9 @@ having the positive label $P$
 Both \citet{friedel_et_al_2006} and \citet{guan_et_al_2018}
 define an abstention window $a$ as a tuple
 $a := (t_1, t_2); t_1 < t_2$ with two thresholds.
-An abstaining classifier with an abstention window
-instead of a threshold predicts an observation $x$ as:
+An abstaining classifier of the form described in
+(\ref{eq:A}) with an abstention window instead of a
+threshold predicts an observation $x$ as:
 \begin{align*}
   A(\ds, x) =
     \begin{cases}
@@ -441,6 +444,7 @@ methods, because when using a one-vs-one or one-vs-all
 approach it is possible that more than one label gets
 predicted by the abstaining classifier
 \citep[see][]{friedel_2005}.
+
 On the other hand an arbitrary number of labels can be
 predicted with a single threshold, though the solution
 could be sub-optimal and is depending heavily on the
@@ -462,33 +466,46 @@ Like stated in Chapter~\ref{sec:intro} using a reward
 function---like used in reinforcement learning---in a
 supervised learning setting is rather uncommon.
 In Chapter~\ref{sec:intro} and Chapter~\ref{sec:example}
-the reasons why using reward instead of cost are given.
+some reasons why using reward instead of cost are given.
 
-An aspect of cost---which makes it less flexible than
-reward---is that it is only defined on $\mathbb{R}^+$,
-while reward is defined on $\mathbb{R}$.
+Another aspect of cost, which makes it less flexible than
+reward, not previously discussed, is that it is only
+defined on $\mathbb{R}^+$, while reward is defined on
+$\mathbb{R}$.
 Reward combines cost with gain.
 
 Let $\rho$ be a reward function:
-\begin{align*}
-  \rho: \Y^* \times \Y^* \rightarrow \mathbb{R}^*.
-\end{align*}
-$\rho$ takes two arbitrary long vectors with labels from
-$\Y$.
+\begin{align}
+  \label{eq:rho}
+  \rho: \Y^* \times \hat{\Y}^* \rightarrow \mathbb{R}^*.
+\end{align}
+$\rho$ takes two arbitrary, but equal long vectors with
+labels from $\Y$ and from $\hat{\Y}$. $\hat{\Y}$ can be
+equal to $\Y$ or also contain an element indicating
+abstention $\bot$.
 The first vector contains the true labels of some sequence
 of examples, the second contains the predicted labels from
-a scoring classifier $S$ for the same sequence.
-The sequence of examples is ordered after the scores
-produced by $S$ in descending order.
-$\rho$ returns a vector of rewards for each tuple of true
-label and predicted label.
+some classifier for the same sequence.
+$\rho$ returns a reward for each tuple of true
+label and predicted label from the parameter vectors.
+
+Reward functions, which also take a third vector with the
+associated score as argument are also possible:
+\begin{align}
+  \label{eq:rho2}
+  \rho: \Y^* \times \hat{\Y}^* \times \mathbb{R}^*
+        \rightarrow \mathbb{R}^*.
+\end{align}
+They are obviously only defined for scoring classifiers and
+abstaining classifiers based on scoring classifiers.
 
 The reward function is basically treated as a black box
-function, the only knowledge we have is, whether $\rho$
-produces single-step reward or accumulated reward values.
+function; the only knowledge we have is, whether $\rho$
+produces single-step reward or accumulated reward values
+and whether $\rho$ is stateful or stateless.
 
 Treating the reward function this way makes it much more
-flexible than the cost setting which uses cost matrices
+flexible than a cost setting which uses cost matrices
 \citep[see][]{fisher_et_al_2016}. A cost matrix $C$ for a
 binary abstaining classifier is defined as
 \begin{align*}
@@ -496,20 +513,24 @@ binary abstaining classifier is defined as
     \begin{pmatrix}
       C(P, P) &C(P, N) &C(P, \bot) \\
       C(N, P) &C(N, N) &C(N, \bot) \\
-    \end{pmatrix}
+    \end{pmatrix}.
 \end{align*}
-and is basically the inverse of a single step reward
-function---with the difference that $C(P, P)$ and $C(N, N)$
-normally do not have a gain associated to them, because
-then the cost matrix would not be true to its cost
-setting. A cell of $C$ would provide a gain if its value
-is smaller than zero.
+A cost function $c$ with the same definition as
+(\ref{eq:rho}) based on such a cost matrix $C$ would be
+defined as $c(\vec{t}, \vec{p}) = [C(t_i, p_i);
+i=1,\dots,|\vec{t}|]^T$ and is basically the inverse of a
+single step reward function---with the difference that
+$C(P, P)$ and $C(N, N)$ normally do not have a gain
+associated to them, because then the cost matrix would not
+be true to its cost setting.
+A cell of a cost matrix $C$ would provide a gain if its
+value is smaller than zero.
 
-A reward function that accumulates provides an even more
-flexible setting than single step reward---which is only
-dependent on one example's true and predicted
-label---because it can introduce the concept of state
-\citep[see][Chapter 1]{sutton_et_al_2018}.
+A reward function that returns already accumulated rewards
+provides an even more flexible setting than single step
+reward---which is only dependent on one example's true and
+predicted label---because it can introduce the concept of
+state \citep[see][Chapter 1]{sutton_et_al_2018}.
 
 For example, our classifier could be a bettor betting on
 the outcome of a card game.
@@ -523,15 +544,104 @@ loses.
 It gains a certain amount---depending on how much money the
 classifier owns after the last match it has bet on---if
 it decides to bet on the current match and does so
-correctly or loses two thirds of its reward if the
-classifier was wrong.
+correctly or loses two thirds of its reward up to the
+current bet if the classifier was wrong.
 A reward function like this is not stateless like a
-single step reward function and is a classical alternative
-to it in reinforcement learning
+single step reward function and is a commonly used
+in the reinforcement learning setting
 \citep[see][Chapter 1]{sutton_et_al_2018}.
 
-The idea now is to find a threshold with which the
-expected reward is maximized.
+The method proposed in this thesis only works for
+stateless reward functions.
+An alternative approach for approximating the optimal
+threshold for reward functions with state based on
+Bayesian optimization is described in
+Chapter~\ref{sec:further_research}.
+
+\subsection{Method for approximating the optimal threshold
+  for abstention based on a stateless reward function}
+
+For approximating the optimal threshold---which maximizes
+the expected reward---in a stateless reward setting, an
+architecture comparable to and influenced by the
+meta-conform\-al prediction approach described in
+\citet{smirnov_et_al_2009} is proposed.
+The architecture of an abstaining classifier based on
+reward is comparable to the combined classifier used for
+meta-conformal prediction.
+A combined classifier \textit{B:M} uses a base classifier
+$B$ defined like (\ref{eq:D}) and a conformal predictor $M$
+in order to induce $B$ with a confidence measure.
+\textit{B:M} can then be transformed to an abstaining
+classifier by defining a threshold $T$ in the confidence
+values generated by $M$ using the ROC isometrics approach
+\citep[see][]{smirnov_et_al_2009, vanderlooy_et_al_2009,
+  fassbender2019}.
+
+The threshold $T$ of an abstaining classifier $A$ that
+approximates the maximum expected reward is defined during
+the training phase.
+Let $\ds$ be a training set.
+$\ds$ is split into $k$ roughly equal sized partitions
+using the $k$-fold method \citep[see][Chapter 7.10;
+Algorithm~\ref{alg:method}, line 2]{hastie_et_al_2009}.
+
+For each partition combine the other $k-1$ partitions to a
+training set; train a scoring classifier $S$ on this
+set and let it predict on the partition it was not trained
+on. Add $kv$ (see Equation~\ref{eq:kv}) of the
+predictions and the true labels from the predicted
+partition to a prediction set
+$P \subseteq \Y^n \times \hat{Y}^n \times \mathbb{R}^n$
+(see Algorithm~\ref{alg:method}, lines 3--11).
+
+After that the reward---with a reward function
+$\rho$---from the prediction set is computed.
+Every reward is related to an element from $P$ and the
+reward is combined with the scores from $P$ to build the
+reward points $R \subseteq (\mathbb{R}^2)^n$, where the
+scores are mapped to their associated rewards
+(see Algorithm~\ref{alg:method}, lines 12, 13).
+
+Afterwards $R$ is sorted in descending order based on the
+scores, transforming it into a sequence.
+If $\rho$ is a single step reward function the rewards
+are accumulated, which only means that the reward at a
+single point is the sum of all rewards with a score higher
+than or equal to itself.
+Since $R$ is now an already sorted sequence
+$R := [(s_i, r_i); i=1,\dots,n]$ the accumulated version
+of $R$ is
+$R^\prime := [(s_i, \sum_{j=1}^{i} r_j); i=1,\dots,n]$
+(see Algorithm~\ref{alg:method}, lines 15--17).
+
+In order to derive $T$ from $R$ one could simply take the
+middle between the score which has the highest associated
+reward $h := \max_{s_i} R$ and its direct successor in
+$\mathbb{R}$,
+$h^\prime := \argmin_{s_i} s_i - h; s_i > h, i=1,\dots,n$.
+Then $T$ would be equal to $h - \frac{h-h^\prime}{2}$.
+
+For determining $T$ like this, $R$ would be reduced so each
+score is unique, since $T$ can only split between two
+scores $s_i, s_j$, if $s_i \neq s_j$.
+This step is optionally
+(see Algorithm~\ref{alg:method}, line 18).
+
+Making $R$ unique could be done in different ways, for
+example---if $\rho$ is a single step reward function---it
+would make sense to take the last tuple of a sub-sequence
+where each tuple has the same score, since it contains the
+most information about the reward.
+One could also reduce them by averaging their rewards, etc.
+
+Another approach to just determining the best $T$ would be
+to train a regression model on $R$ and find for which
+score it produces the maximum reward estimation
+(see Algorithm~\ref{alg:method})where it
+produces its maxiflexible approach to just taking the score
+%is a single step reward function---the rewards are
+%accumulated (
 
 \begin{algorithm}
   \caption{: k-fold method for determining the threshold
@@ -548,14 +658,14 @@ expected reward is maximized.
 
   \quad $k$: the amount of partitions,
 
-  \quad $R$: a regressor (optionally)
+  \quad $Reg$: a regressor (optionally)
 
   \textbf{Output:}
 
   \quad T: threshold
 
   \begin{algorithmic}[1]
-    \STATE{predicted points := $\{\}$}
+    \STATE{\texttt{predicted points} := $\{\}$}
     \STATE{split data set into $k$ roughly equal sized
            partitions $\text{split}_1,\dots,
            \text{split}_k$}
@@ -564,23 +674,30 @@ expected reward is maximized.
              \text{split}_i$ to the training set}
       \STATE{train $S$ with the training set}
       \STATE{let $S$ predict examples in $\text{split}_i$}
-      \FORALL{elements in prediction of $S$}
+      \FORALL{elements in prediction of $S$ $\times$ the
+              the true labels}
         \STATE{get the label associated with the highest
               score for the element with (\ref{eq:kv})}
-        \STATE{add the label and score to predicted points}
+        \STATE{add the true label, the predicted label and
+               the score to \texttt{predicted points}}
       \ENDFOR
     \ENDFOR
-    \STATE{sort predicted points based on the score in
-           descending order}
-    \STATE{rewards := $\rho$ with the true label and the
-           predicted label from the predicted points as
-           arguments}
-    \STATE{reward points := scores from predicted points
-           $\times$ rewards}
-    \STATE{reduce reward points so all scores are unique}
-    \STATE{train $R$ (optionally)}
-    \STATE{T := $\argmax R$ or just the score which has
-           the highest reward associated}
+    \STATE{\texttt{rewards} := $\rho$ with the true label
+           and the predicted label from \texttt{predicted
+           points} as arguments}
+    \STATE{\texttt{reward points} := scores from
+           \texttt{predicted points} $\times$
+           \texttt{rewards}}
+    \STATE{sort \texttt{reward points} based on the
+           scores in descending order}
+    \IF{$\rho$ is a single step reward function}
+      \STATE{accumulate reward in \texttt{reward points}}
+    \ENDIF
+    \STATE{reduce \texttt{reward points} so all scores are
+           unique (optionally)}
+    \STATE{train $Reg$ (optionally)}
+    \STATE{$T := \argmax Reg$ or the middle between the
+           score which has the highest reward associated}
     \RETURN{$T$}
   \end{algorithmic}
 \end{algorithm}
