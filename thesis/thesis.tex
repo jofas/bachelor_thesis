@@ -1121,7 +1121,7 @@ for which the reward is computed, $\vec{t}$ being the
 vector of true labels from the parameters.
 
 % rew fns {{{
-\begin{longtabu}{p{3cm}X}
+\begin{longtabu}{p{3cm}|X}
     name &definition \\ \hline
     \texttt{simple}
     &$\rho(\vec{t}, \vec{p}) = \Bigg[
@@ -1277,16 +1277,20 @@ vector of true labels from the parameters.
 
 % }}}
 
+% regressors {{{
 \subsection{Regressors}
 
 Five different kernelized regressors where used in order
 to test whether using (\ref{eq:T_Reg}) to determine the
-optimal threshold can be produce better approximations than
+optimal threshold can produce better approximations than
 deriving the threshold like (\ref{eq:T_R}).
+(\ref{eq:T_R}) is called \texttt{bare} in this section.
+
 Three regressors, \texttt{GP [1e-3, 1]},
 \texttt{GP [1e-1, 1]} and \texttt{GP [1, 2]} are based on
 a Gaussian process, while \texttt{SVR C1} and
-\texttt{SVR C100} are based on support vector regression.
+\texttt{SVR C100} are based on support vector regression
+\citep[see e.g.][Chapters 14, 15]{murphy_2012}.
 
 All regressors based on a Gaussian process are based on
 a RBF kernel defined like
@@ -1327,15 +1331,15 @@ $\psi$ maps an observation from $\X$ to an enlarged space
 All regressors are based on the implementations from
 the scikit-learn library \citep[see][]{sklearn_api}.
 
-\subsection{Results}
-
 % }}}
 
-%\begin{luacode*}
-%  \input{lib.lua}
-%\end{luacode*}
+\subsection{Results}
 
-%\directlua{hw()}
+
+%\directlua{lib = require("lib")}
+%\directlua{lib.result_tables()}
+
+% }}}
 
 \section{Further research}
 \label{sec:further_research}
@@ -1345,6 +1349,12 @@ the scikit-learn library \citep[see][]{sklearn_api}.
 \renewcommand{\appendixpagename}{}
 \begin{appendices}
   \section*{Appendix}
+
+  \section{Results of the experiments}
+
+  \input{results}
+
+  \newpage
 
   \section{Plots}
 
