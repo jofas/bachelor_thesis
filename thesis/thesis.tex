@@ -708,6 +708,10 @@ $P \subseteq \Y^n \times \hat{Y}^n \times \mathbb{R}^n$
 
 After that $P$ is sorted in descending order based on the
 scores, transforming it into a sequence.
+This is done in order to simplify reward accumulation,
+since we reduce the problem of finding the reward at a
+certain threshold on just taking all elements from $P$
+which come first in the sequence.
 The reward from the first two columns of $P$---with a
 reward function $\rho$ defined like (\ref{eq:rho})---is
 computed.
@@ -717,18 +721,27 @@ stateful reward functions must also assume iid on the
 sequence it sees as its parameters.
 Every reward is related to an element from $P$ and the
 reward is combined with the scores from $P$ to build the
-reward points $R := [(s_i, r_i); i=1,\dots,n]; R \in
-\mathbb{R}^{n \times 2}$, where the scores are mapped to
-their associated rewards
+reward points $R$. $R$ can be represented as a matrix
+$R: n \times 2$, where the first column contains all scores
+and the second column contains the associated reward.
+\begin{align*}
+  R: n \times 2 :=
+    \begin{pmatrix}
+      s_1 &r_1 \\
+      \vdots &\vdots \\
+      s_n &r_n
+    \end{pmatrix}
+\end{align*}
 (see Algorithm~\ref{alg:method}, lines 12, 13).
 
 If $\rho$ is a single step reward function the rewards
 are accumulated, which only means that the reward at a
 single point is the sum of all rewards previously seen
 (all previously seen scores are higher or equal to the
-score of the single point, since $R$ is a sorted sequence).
+score of the single point, since $R$ is sorted on its
+first column).
 The accumulated version of $R$ is
-$R^\prime := [(s_i, \sum_{j=1}^{i} r_j); i=1,\dots,n]$
+$R^\prime := [(s_i, \sum_{j=1}^{i} r_j); i=1,\dots,n]^T$
 (see Algorithm~\ref{alg:method}, lines 14--16).
 
 At last $T$ is derived from $R$. If $Reg$ is defined it
@@ -736,12 +749,12 @@ is trained on $R$, with $s_i$ as observation and $r_i$ as
 the label. $T$ is set equal to the score for which $Reg$
 predicts the highest reward; the local maximum of $Reg$.
 Only the local maximum is of interest, which means $T$
-must lie in the interval derived from the convex hull of
+must lie in the interval derived from the convex hull
+$C := \text{Conv}(\{i=1,\dots,n:R_{i1}\})$ of
 all scores generated from $S$ during the training:
 \begin{align}
   \label{eq:T_Reg}
-  T := \argmax_{s \in \text{convex hull}(s_i \in R)}
-        Reg(s).
+  T := \argmax_{s | \min C \leq s \leq \max C} Reg(s).
 \end{align}
 
 % reduce R {{{
@@ -783,12 +796,13 @@ by taking the score which has the highest associated
 reward
 \begin{align}
   \label{eq:T_R}
-  T := \argmax_{s_i} R.
+  T := R_{i1}: \argmax_{i|1 \leq i \leq n} f(i) = R_{i2}.
 \end{align}
 For determining $T$ like this, $R$ would be reduced so each
 score is unique, since $T$ can only split between two
 scores $s_i, s_j$, if $s_i \neq s_j$.
-This step is optional
+This step is optional, because maybe for use with $Reg$ an
+unreduced set of points is wanted
 (see Algorithm~\ref{alg:method}, line 17).
 
 Making $R$ unique could be done in different ways, for
@@ -1253,7 +1267,10 @@ vector of true labels from the parameters.
         -M^{1000}_{p_j,t_j} &\text{if } t_j \neq p_j
       \end{cases} \Bigg]^T$\\ \\
 
-  \caption{Reward functions.}
+  \caption{Reward functions. $RND(0,1)$ is a function
+           returning a pseudo random value from the uniform
+           distribution constrained on the interval
+           $(0,1)$.}
   \label{tab:rew_fns}
 \end{longtabu}
 % }}}
@@ -1261,6 +1278,54 @@ vector of true labels from the parameters.
 % }}}
 
 \subsection{Regressors}
+
+Five different kernelized regressors where used in order
+to test whether using (\ref{eq:T_Reg}) to determine the
+optimal threshold can be produce better approximations than
+deriving the threshold like (\ref{eq:T_R}).
+Three regressors, \texttt{GP [1e-3, 1]},
+\texttt{GP [1e-1, 1]} and \texttt{GP [1, 2]} are based on
+a Gaussian process, while \texttt{SVR C1} and
+\texttt{SVR C100} are based on support vector regression.
+
+All regressors based on a Gaussian process are based on
+a RBF kernel defined like
+\begin{align}
+  \label{eq:rbf}
+  k(x, x^\prime) = c * \exp \bigg(
+    -\frac{\| x - x^\prime \|}{2l^2} \bigg),
+\end{align}
+$c$ being a constant optimized during training and $l$ is
+called the length scale, also optimized during training.
+For each regressor $c$ is bound to the interval
+$[0.001, 100]$, while the length scale is bound to the
+interval in the regressor's name.
+The different intervals are designed to generate regressors
+with different bias-variance trade-off.
+\texttt{GP [1, 2]}, for example, has a high variance, but
+low bias, while \texttt{GP [1e-3, 1]} has a low variance
+and a high bias.
+$c$ and $l$ are optimized during training with the
+L-BFGS-B optimization algorithm from the scipy library
+\citep[see][]{zhu_et_al_1997, scipy}.
+
+\texttt{SVR C1} and \texttt{SVR C100} are both
+$\epsilon$-support vector machines for regression.
+They differ in their penalty parameter $C$.
+Both are also based on the RBF kernel:
+\begin{align}
+  \label{eq:rbf_svm}
+  k(x, x^\prime) = \exp \bigg(
+    -\frac{\| \psi(x) - \psi(x^\prime) \|}{2l^2} \bigg).
+\end{align}
+(\ref{eq:rbf_svm}) is defined like (\ref{eq:rbf}),
+without the $c$ parameter and $x$, $x^\prime$ replaced by
+$\psi(x)$ and $\psi(x^\prime)$.
+$\psi$ maps an observation from $\X$ to an enlarged space
+\citep[see][Chapter 12.3]{hastie_et_al_2009}.
+
+All regressors are based on the implementations from
+the scikit-learn library \citep[see][]{sklearn_api}.
 
 \subsection{Results}
 
