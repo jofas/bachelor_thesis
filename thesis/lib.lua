@@ -152,7 +152,7 @@ local function result_tables()
       local i = 0
 
       for reward, v2 in pairs(v1) do
-        local line = {reward}
+        local line = {trans[reward]}
 
         for reg, rew in pairs(v2) do
           if i == 0 then

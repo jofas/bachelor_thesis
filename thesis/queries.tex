@@ -1,0 +1,42 @@
+
+\begin{table}
+\begin{center}
+  {\scriptsize
+  \begin{tabu}{l|l|l|l|l|l|l}
+
+&\texttt{bare} &\texttt{SVR C1} &\texttt{SVR C100} &\texttt{GP [1, 2]} &\texttt{GP [1e-1, 1]} &\texttt{GP [1e-3, 1]} \\\hline
+mean &0.975 &0.811 &0.803 &0.803 &0.754 &0.787 \\
+median &0.997 &0.972 &0.981 &0.990 &0.988 &0.992 \\
+$\sigma$ &0.110 &0.344 &0.364 &0.366 &0.403 &0.381 \\
+
+  \end{tabu} }
+  \caption{Metrics over all data sets,
+        scoring classifiers and reward functions. }
+  \label{tab:metrics_overall}
+\end{center}
+\end{table}
+
+\begin{table}
+\begin{center}
+  {\scriptsize
+  \begin{tabu}{l|l|l|l|l|l|l}
+
+&\texttt{bare} &\texttt{SVR C1} &\texttt{SVR C100} &\texttt{GP [1, 2]} &\texttt{GP [1e-1, 1]} &\texttt{GP [1e-3, 1]} \\
+\hline
+cp &&&&&& \\ &&&&&&\\
+mean &0.981 &0.790 &0.762 &0.756 &0.661 &0.697 \\
+median &0.997 &0.964 &0.979 &0.978 &0.967 &0.984 \\
+$\sigma$ &0.076 &0.363 &0.390 &0.387 &0.440 &0.423 \\
+\hline
+rf &&&&&& \\ &&&&&&\\
+mean &0.970 &0.833 &0.844 &0.851 &0.847 &0.876 \\
+median &0.996 &0.974 &0.982 &0.994 &0.992 &0.994 \\
+$\sigma$ &0.135 &0.325 &0.332 &0.340 &0.339 &0.311 \\
+
+  \end{tabu} }
+  \caption{Metrics for each scoring classifier
+        over all data sets and reward functions. }
+  \label{tab:metrics_scorer}
+\end{center}
+\end{table}
+

@@ -15,6 +15,7 @@
 \usepackage{listings}
 \usepackage{fancyref}
 \usepackage{relsize}
+\usepackage{float}
 
 \usetikzlibrary{%
     arrows,
@@ -1335,9 +1336,57 @@ the scikit-learn library \citep[see][]{sklearn_api}.
 
 \subsection{Results}
 
+The settings of the experiments were all the same.
+It was tested how well different thresholds determined by
+Algorithm~\ref{alg:method} with different settings
+(described above) performed. $k$ was always set to five and
+each data set was randomly permuted.
+The reward points were all reduced like
+Figure~\ref{fig:reduce} displays.
+Ten percent of the randomly permuted data set were used as
+a test set and the rest as training data.
 
-%\directlua{lib = require("lib")}
-%\directlua{lib.result_tables()}
+The performance of the underlying scorer was not tested,
+only how close the threshold approximates the optimal
+result. Therefore, the results only show how much percent
+of the best possible reward on the test set the abstaining
+classifier achieves with the determined threshold.
+
+The results of each experiment are shown in
+Appendix~\ref{sec:res}.
+Appendix~\ref{sec:plots} shows plots where the score
+is mapped to the reward.
+In Appendix~\ref{sec:metrics_rew} metrics for each reward
+function over every experiment are displayed.
+
+Table~\ref{tab:metrics_overall} shows the average, median
+and standard deviation of every regressor and \texttt{bare}
+over all data sets.
+Table~\ref{tab:metrics_scorer} shows the same information
+split by the underlying scoring classifier.
+
+The overall performance of each threshold approximator
+(\ref{eq:T_Reg}) and (\ref{eq:T_R}) are quite good,
+while (\ref{eq:T_R}) (\texttt{bare}) on average
+outperformed the thresholds determined by regressors.
+It is also quite more stable, having a standard deviation
+$\sigma$ a lot smaller than the other approximators have.
+While this can be an argument not to use (\ref{eq:T_Reg}),
+actually \texttt{bare} was outperformed 44 percent of the
+time by a regressor with an average of nearly two percent
+(0.018) more reward on the test set.
+
+While overall the performance of the regressors was quite
+good, on all reward functions with an abstaining cost,
+all regressors somewhat failed utterly
+(see Appendix~\ref{sec:res}). This is why their average
+is far lower than their mean
+(see Table~\ref{tab:metrics_overall}).
+The regressors perform better with \texttt{rf} as scoring
+classifier than with \texttt{cp}, while \texttt{bare} is
+constant on both (see Table~\ref{tab:metrics_scorer}).
+
+\input{queries}
 
 % }}}
 
@@ -1346,17 +1395,31 @@ the scikit-learn library \citep[see][]{sklearn_api}.
 
 \section{Conclusion}
 
+\newpage
+
 \renewcommand{\appendixpagename}{}
 \begin{appendices}
   \section*{Appendix}
 
+  \section{Metrics per reward function}
+  \label{sec:metrics_rew}
+
+  \input{rew_metrics}
+
+  \newpage
+
   \section{Results of the experiments}
+  \label{sec:res}
 
   \input{results}
 
   \newpage
 
-  \section{Plots}
+  \section{Plots from the \texttt{usps} data set with
+    \texttt{cp} as scoring classifier}
+  \label{sec:plots}
+
+  \input{plots}
 
   \newpage
 

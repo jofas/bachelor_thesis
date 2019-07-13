@@ -1,0 +1,1333 @@
+
+  \begin{figure}[H]
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+    \datavisualization[
+      scientific axes=clean,
+      visualize as line/.list={trainingset, testset, svrc1,
+                               svrc100, gp0, gp1, gp2},
+      style sheet=strong colors,
+      trainingset={label in legend={text=Training set}},
+      testset={label in legend={text=Test set}},
+      svrc1={label in legend={text=\texttt{SVR C1}}},
+      svrc100={label in legend={text=\texttt{SVR C100}}},
+      gp0={label in legend={text=\texttt{GP [1, 2]}}},
+      gp1={label in legend={text=\texttt{GP [1e-1, 1]}}},
+      gp2={label in legend={text=\texttt{GP [1e-3, 1]}}},
+      x axis = {label=score},
+      y axis = {label=normalized reward},
+    ]
+    data[
+      headline={x, y},
+      set=trainingset,
+      read from file={
+        ../experiments/usps_02/cp/simple/Trainingset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=testset,
+      read from file={
+        ../experiments/usps_02/cp/simple/Testset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc1,
+      read from file={
+        ../experiments/usps_02/cp/simple/SVRRBFC1.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc100,
+      read from file={
+        ../experiments/usps_02/cp/simple/SVRRBFC100.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp0,
+      read from file={
+        ../experiments/usps_02/cp/simple/GP[1,2].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp1,
+      read from file={
+        ../experiments/usps_02/cp/simple/GP[1e-1,1].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp2,
+      read from file={
+        ../experiments/usps_02/cp/simple/GP[1e-3,1].csv
+      }
+    ]
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \caption{Results from the \texttt{simple} reward function.}
+  \end{figure}
+
+  \begin{figure}[H]
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+    \datavisualization[
+      scientific axes=clean,
+      visualize as line/.list={trainingset, testset, svrc1,
+                               svrc100, gp0, gp1, gp2},
+      style sheet=strong colors,
+      trainingset={label in legend={text=Training set}},
+      testset={label in legend={text=Test set}},
+      svrc1={label in legend={text=\texttt{SVR C1}}},
+      svrc100={label in legend={text=\texttt{SVR C100}}},
+      gp0={label in legend={text=\texttt{GP [1, 2]}}},
+      gp1={label in legend={text=\texttt{GP [1e-1, 1]}}},
+      gp2={label in legend={text=\texttt{GP [1e-3, 1]}}},
+      x axis = {label=score},
+      y axis = {label=normalized reward},
+    ]
+    data[
+      headline={x, y},
+      set=trainingset,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_5/Trainingset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=testset,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_5/Testset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc1,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_5/SVRRBFC1.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc100,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_5/SVRRBFC100.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp0,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_5/GP[1,2].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp1,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_5/GP[1e-1,1].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp2,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_5/GP[1e-3,1].csv
+      }
+    ]
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \caption{Results from the \texttt{simple scaled 1:5} reward function.}
+  \end{figure}
+
+  \begin{figure}[H]
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+    \datavisualization[
+      scientific axes=clean,
+      visualize as line/.list={trainingset, testset, svrc1,
+                               svrc100, gp0, gp1, gp2},
+      style sheet=strong colors,
+      trainingset={label in legend={text=Training set}},
+      testset={label in legend={text=Test set}},
+      svrc1={label in legend={text=\texttt{SVR C1}}},
+      svrc100={label in legend={text=\texttt{SVR C100}}},
+      gp0={label in legend={text=\texttt{GP [1, 2]}}},
+      gp1={label in legend={text=\texttt{GP [1e-1, 1]}}},
+      gp2={label in legend={text=\texttt{GP [1e-3, 1]}}},
+      x axis = {label=score},
+      y axis = {label=normalized reward},
+    ]
+    data[
+      headline={x, y},
+      set=trainingset,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_20/Trainingset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=testset,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_20/Testset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc1,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_20/SVRRBFC1.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc100,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_20/SVRRBFC100.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp0,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_20/GP[1,2].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp1,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_20/GP[1e-1,1].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp2,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_20/GP[1e-3,1].csv
+      }
+    ]
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \caption{Results from the \texttt{simple scaled 1:20} reward function.}
+  \end{figure}
+
+  \begin{figure}[H]
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+    \datavisualization[
+      scientific axes=clean,
+      visualize as line/.list={trainingset, testset, svrc1,
+                               svrc100, gp0, gp1, gp2},
+      style sheet=strong colors,
+      trainingset={label in legend={text=Training set}},
+      testset={label in legend={text=Test set}},
+      svrc1={label in legend={text=\texttt{SVR C1}}},
+      svrc100={label in legend={text=\texttt{SVR C100}}},
+      gp0={label in legend={text=\texttt{GP [1, 2]}}},
+      gp1={label in legend={text=\texttt{GP [1e-1, 1]}}},
+      gp2={label in legend={text=\texttt{GP [1e-3, 1]}}},
+      x axis = {label=score},
+      y axis = {label=normalized reward},
+    ]
+    data[
+      headline={x, y},
+      set=trainingset,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_100/Trainingset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=testset,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_100/Testset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc1,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_100/SVRRBFC1.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc100,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_100/SVRRBFC100.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp0,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_100/GP[1,2].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp1,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_100/GP[1e-1,1].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp2,
+      read from file={
+        ../experiments/usps_02/cp/simple_scaled_1_100/GP[1e-3,1].csv
+      }
+    ]
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \caption{Results from the \texttt{simple scaled 1:100} reward function.}
+  \end{figure}
+
+  \begin{figure}[H]
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+    \datavisualization[
+      scientific axes=clean,
+      visualize as line/.list={trainingset, testset, svrc1,
+                               svrc100, gp0, gp1, gp2},
+      style sheet=strong colors,
+      trainingset={label in legend={text=Training set}},
+      testset={label in legend={text=Test set}},
+      svrc1={label in legend={text=\texttt{SVR C1}}},
+      svrc100={label in legend={text=\texttt{SVR C100}}},
+      gp0={label in legend={text=\texttt{GP [1, 2]}}},
+      gp1={label in legend={text=\texttt{GP [1e-1, 1]}}},
+      gp2={label in legend={text=\texttt{GP [1e-3, 1]}}},
+      x axis = {label=score},
+      y axis = {label=normalized reward},
+    ]
+    data[
+      headline={x, y},
+      set=trainingset,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_50/Trainingset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=testset,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_50/Testset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc1,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_50/SVRRBFC1.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc100,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_50/SVRRBFC100.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp0,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_50/GP[1,2].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp1,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_50/GP[1e-1,1].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp2,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_50/GP[1e-3,1].csv
+      }
+    ]
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \caption{Results from the \texttt{asymmetric loss 50} reward function.}
+  \end{figure}
+
+  \begin{figure}[H]
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+    \datavisualization[
+      scientific axes=clean,
+      visualize as line/.list={trainingset, testset, svrc1,
+                               svrc100, gp0, gp1, gp2},
+      style sheet=strong colors,
+      trainingset={label in legend={text=Training set}},
+      testset={label in legend={text=Test set}},
+      svrc1={label in legend={text=\texttt{SVR C1}}},
+      svrc100={label in legend={text=\texttt{SVR C100}}},
+      gp0={label in legend={text=\texttt{GP [1, 2]}}},
+      gp1={label in legend={text=\texttt{GP [1e-1, 1]}}},
+      gp2={label in legend={text=\texttt{GP [1e-3, 1]}}},
+      x axis = {label=score},
+      y axis = {label=normalized reward},
+    ]
+    data[
+      headline={x, y},
+      set=trainingset,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_200/Trainingset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=testset,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_200/Testset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc1,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_200/SVRRBFC1.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc100,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_200/SVRRBFC100.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp0,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_200/GP[1,2].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp1,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_200/GP[1e-1,1].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp2,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_200/GP[1e-3,1].csv
+      }
+    ]
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \caption{Results from the \texttt{asymmetric loss 200} reward function.}
+  \end{figure}
+
+  \begin{figure}[H]
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+    \datavisualization[
+      scientific axes=clean,
+      visualize as line/.list={trainingset, testset, svrc1,
+                               svrc100, gp0, gp1, gp2},
+      style sheet=strong colors,
+      trainingset={label in legend={text=Training set}},
+      testset={label in legend={text=Test set}},
+      svrc1={label in legend={text=\texttt{SVR C1}}},
+      svrc100={label in legend={text=\texttt{SVR C100}}},
+      gp0={label in legend={text=\texttt{GP [1, 2]}}},
+      gp1={label in legend={text=\texttt{GP [1e-1, 1]}}},
+      gp2={label in legend={text=\texttt{GP [1e-3, 1]}}},
+      x axis = {label=score},
+      y axis = {label=normalized reward},
+    ]
+    data[
+      headline={x, y},
+      set=trainingset,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_1000/Trainingset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=testset,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_1000/Testset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc1,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_1000/SVRRBFC1.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc100,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_1000/SVRRBFC100.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp0,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_1000/GP[1,2].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp1,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_1000/GP[1e-1,1].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp2,
+      read from file={
+        ../experiments/usps_02/cp/asymetric_1000/GP[1e-3,1].csv
+      }
+    ]
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \caption{Results from the \texttt{asymmetric loss 1000} reward function.}
+  \end{figure}
+
+  \begin{figure}[H]
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+    \datavisualization[
+      scientific axes=clean,
+      visualize as line/.list={trainingset, testset, svrc1,
+                               svrc100, gp0, gp1, gp2},
+      style sheet=strong colors,
+      trainingset={label in legend={text=Training set}},
+      testset={label in legend={text=Test set}},
+      svrc1={label in legend={text=\texttt{SVR C1}}},
+      svrc100={label in legend={text=\texttt{SVR C100}}},
+      gp0={label in legend={text=\texttt{GP [1, 2]}}},
+      gp1={label in legend={text=\texttt{GP [1e-1, 1]}}},
+      gp2={label in legend={text=\texttt{GP [1e-3, 1]}}},
+      x axis = {label=score},
+      y axis = {label=normalized reward},
+    ]
+    data[
+      headline={x, y},
+      set=trainingset,
+      read from file={
+        ../experiments/usps_02/cp/random/Trainingset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=testset,
+      read from file={
+        ../experiments/usps_02/cp/random/Testset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc1,
+      read from file={
+        ../experiments/usps_02/cp/random/SVRRBFC1.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc100,
+      read from file={
+        ../experiments/usps_02/cp/random/SVRRBFC100.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp0,
+      read from file={
+        ../experiments/usps_02/cp/random/GP[1,2].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp1,
+      read from file={
+        ../experiments/usps_02/cp/random/GP[1e-1,1].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp2,
+      read from file={
+        ../experiments/usps_02/cp/random/GP[1e-3,1].csv
+      }
+    ]
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \caption{Results from the \texttt{random loss} reward function.}
+  \end{figure}
+
+  \begin{figure}[H]
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+    \datavisualization[
+      scientific axes=clean,
+      visualize as line/.list={trainingset, testset, svrc1,
+                               svrc100, gp0, gp1, gp2},
+      style sheet=strong colors,
+      trainingset={label in legend={text=Training set}},
+      testset={label in legend={text=Test set}},
+      svrc1={label in legend={text=\texttt{SVR C1}}},
+      svrc100={label in legend={text=\texttt{SVR C100}}},
+      gp0={label in legend={text=\texttt{GP [1, 2]}}},
+      gp1={label in legend={text=\texttt{GP [1e-1, 1]}}},
+      gp2={label in legend={text=\texttt{GP [1e-3, 1]}}},
+      x axis = {label=score},
+      y axis = {label=normalized reward},
+    ]
+    data[
+      headline={x, y},
+      set=trainingset,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_5/Trainingset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=testset,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_5/Testset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc1,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_5/SVRRBFC1.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc100,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_5/SVRRBFC100.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp0,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_5/GP[1,2].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp1,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_5/GP[1e-1,1].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp2,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_5/GP[1e-3,1].csv
+      }
+    ]
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \caption{Results from the \texttt{random loss scaled 1:5} reward function.}
+  \end{figure}
+
+  \begin{figure}[H]
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+    \datavisualization[
+      scientific axes=clean,
+      visualize as line/.list={trainingset, testset, svrc1,
+                               svrc100, gp0, gp1, gp2},
+      style sheet=strong colors,
+      trainingset={label in legend={text=Training set}},
+      testset={label in legend={text=Test set}},
+      svrc1={label in legend={text=\texttt{SVR C1}}},
+      svrc100={label in legend={text=\texttt{SVR C100}}},
+      gp0={label in legend={text=\texttt{GP [1, 2]}}},
+      gp1={label in legend={text=\texttt{GP [1e-1, 1]}}},
+      gp2={label in legend={text=\texttt{GP [1e-3, 1]}}},
+      x axis = {label=score},
+      y axis = {label=normalized reward},
+    ]
+    data[
+      headline={x, y},
+      set=trainingset,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_20/Trainingset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=testset,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_20/Testset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc1,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_20/SVRRBFC1.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc100,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_20/SVRRBFC100.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp0,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_20/GP[1,2].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp1,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_20/GP[1e-1,1].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp2,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_20/GP[1e-3,1].csv
+      }
+    ]
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \caption{Results from the \texttt{random loss scaled 1:20} reward function.}
+  \end{figure}
+
+  \begin{figure}[H]
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+    \datavisualization[
+      scientific axes=clean,
+      visualize as line/.list={trainingset, testset, svrc1,
+                               svrc100, gp0, gp1, gp2},
+      style sheet=strong colors,
+      trainingset={label in legend={text=Training set}},
+      testset={label in legend={text=Test set}},
+      svrc1={label in legend={text=\texttt{SVR C1}}},
+      svrc100={label in legend={text=\texttt{SVR C100}}},
+      gp0={label in legend={text=\texttt{GP [1, 2]}}},
+      gp1={label in legend={text=\texttt{GP [1e-1, 1]}}},
+      gp2={label in legend={text=\texttt{GP [1e-3, 1]}}},
+      x axis = {label=score},
+      y axis = {label=normalized reward},
+    ]
+    data[
+      headline={x, y},
+      set=trainingset,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_100/Trainingset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=testset,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_100/Testset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc1,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_100/SVRRBFC1.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc100,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_100/SVRRBFC100.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp0,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_100/GP[1,2].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp1,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_100/GP[1e-1,1].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp2,
+      read from file={
+        ../experiments/usps_02/cp/random_scaled_1_100/GP[1e-3,1].csv
+      }
+    ]
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \caption{Results from the \texttt{random loss scaled 1:100} reward function.}
+  \end{figure}
+
+  \begin{figure}[H]
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+    \datavisualization[
+      scientific axes=clean,
+      visualize as line/.list={trainingset, testset, svrc1,
+                               svrc100, gp0, gp1, gp2},
+      style sheet=strong colors,
+      trainingset={label in legend={text=Training set}},
+      testset={label in legend={text=Test set}},
+      svrc1={label in legend={text=\texttt{SVR C1}}},
+      svrc100={label in legend={text=\texttt{SVR C100}}},
+      gp0={label in legend={text=\texttt{GP [1, 2]}}},
+      gp1={label in legend={text=\texttt{GP [1e-1, 1]}}},
+      gp2={label in legend={text=\texttt{GP [1e-3, 1]}}},
+      x axis = {label=score},
+      y axis = {label=normalized reward},
+    ]
+    data[
+      headline={x, y},
+      set=trainingset,
+      read from file={
+        ../experiments/usps_03/cp/random_gain/Trainingset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=testset,
+      read from file={
+        ../experiments/usps_03/cp/random_gain/Testset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc1,
+      read from file={
+        ../experiments/usps_03/cp/random_gain/SVRRBFC1.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc100,
+      read from file={
+        ../experiments/usps_03/cp/random_gain/SVRRBFC100.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp0,
+      read from file={
+        ../experiments/usps_03/cp/random_gain/GP[1,2].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp1,
+      read from file={
+        ../experiments/usps_03/cp/random_gain/GP[1e-1,1].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp2,
+      read from file={
+        ../experiments/usps_03/cp/random_gain/GP[1e-3,1].csv
+      }
+    ]
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \caption{Results from the \texttt{random} reward function.}
+  \end{figure}
+
+  \begin{figure}[H]
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+    \datavisualization[
+      scientific axes=clean,
+      visualize as line/.list={trainingset, testset, svrc1,
+                               svrc100, gp0, gp1, gp2},
+      style sheet=strong colors,
+      trainingset={label in legend={text=Training set}},
+      testset={label in legend={text=Test set}},
+      svrc1={label in legend={text=\texttt{SVR C1}}},
+      svrc100={label in legend={text=\texttt{SVR C100}}},
+      gp0={label in legend={text=\texttt{GP [1, 2]}}},
+      gp1={label in legend={text=\texttt{GP [1e-1, 1]}}},
+      gp2={label in legend={text=\texttt{GP [1e-3, 1]}}},
+      x axis = {label=score},
+      y axis = {label=normalized reward},
+    ]
+    data[
+      headline={x, y},
+      set=trainingset,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_5/Trainingset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=testset,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_5/Testset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc1,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_5/SVRRBFC1.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc100,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_5/SVRRBFC100.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp0,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_5/GP[1,2].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp1,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_5/GP[1e-1,1].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp2,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_5/GP[1e-3,1].csv
+      }
+    ]
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \caption{Results from the \texttt{random scaled 1:5} reward function.}
+  \end{figure}
+
+  \begin{figure}[H]
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+    \datavisualization[
+      scientific axes=clean,
+      visualize as line/.list={trainingset, testset, svrc1,
+                               svrc100, gp0, gp1, gp2},
+      style sheet=strong colors,
+      trainingset={label in legend={text=Training set}},
+      testset={label in legend={text=Test set}},
+      svrc1={label in legend={text=\texttt{SVR C1}}},
+      svrc100={label in legend={text=\texttt{SVR C100}}},
+      gp0={label in legend={text=\texttt{GP [1, 2]}}},
+      gp1={label in legend={text=\texttt{GP [1e-1, 1]}}},
+      gp2={label in legend={text=\texttt{GP [1e-3, 1]}}},
+      x axis = {label=score},
+      y axis = {label=normalized reward},
+    ]
+    data[
+      headline={x, y},
+      set=trainingset,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_20/Trainingset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=testset,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_20/Testset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc1,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_20/SVRRBFC1.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc100,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_20/SVRRBFC100.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp0,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_20/GP[1,2].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp1,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_20/GP[1e-1,1].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp2,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_20/GP[1e-3,1].csv
+      }
+    ]
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \caption{Results from the \texttt{random scaled 1:20} reward function.}
+  \end{figure}
+
+  \begin{figure}[H]
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+    \datavisualization[
+      scientific axes=clean,
+      visualize as line/.list={trainingset, testset, svrc1,
+                               svrc100, gp0, gp1, gp2},
+      style sheet=strong colors,
+      trainingset={label in legend={text=Training set}},
+      testset={label in legend={text=Test set}},
+      svrc1={label in legend={text=\texttt{SVR C1}}},
+      svrc100={label in legend={text=\texttt{SVR C100}}},
+      gp0={label in legend={text=\texttt{GP [1, 2]}}},
+      gp1={label in legend={text=\texttt{GP [1e-1, 1]}}},
+      gp2={label in legend={text=\texttt{GP [1e-3, 1]}}},
+      x axis = {label=score},
+      y axis = {label=normalized reward},
+    ]
+    data[
+      headline={x, y},
+      set=trainingset,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_100/Trainingset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=testset,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_100/Testset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc1,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_100/SVRRBFC1.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc100,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_100/SVRRBFC100.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp0,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_100/GP[1,2].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp1,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_100/GP[1e-1,1].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp2,
+      read from file={
+        ../experiments/usps_03/cp/random_gain_scaled_1_100/GP[1e-3,1].csv
+      }
+    ]
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \caption{Results from the \texttt{random scaled 1:100} reward function.}
+  \end{figure}
+
+  \begin{figure}[H]
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+    \datavisualization[
+      scientific axes=clean,
+      visualize as line/.list={trainingset, testset, svrc1,
+                               svrc100, gp0, gp1, gp2},
+      style sheet=strong colors,
+      trainingset={label in legend={text=Training set}},
+      testset={label in legend={text=Test set}},
+      svrc1={label in legend={text=\texttt{SVR C1}}},
+      svrc100={label in legend={text=\texttt{SVR C100}}},
+      gp0={label in legend={text=\texttt{GP [1, 2]}}},
+      gp1={label in legend={text=\texttt{GP [1e-1, 1]}}},
+      gp2={label in legend={text=\texttt{GP [1e-3, 1]}}},
+      x axis = {label=score},
+      y axis = {label=normalized reward},
+    ]
+    data[
+      headline={x, y},
+      set=trainingset,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_50_abstain/Trainingset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=testset,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_50_abstain/Testset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc1,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_50_abstain/SVRRBFC1.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc100,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_50_abstain/SVRRBFC100.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp0,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_50_abstain/GP[1,2].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp1,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_50_abstain/GP[1e-1,1].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp2,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_50_abstain/GP[1e-3,1].csv
+      }
+    ]
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \caption{Results from the \texttt{asymmetric 50 abstain} reward function.}
+  \end{figure}
+
+  \begin{figure}[H]
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+    \datavisualization[
+      scientific axes=clean,
+      visualize as line/.list={trainingset, testset, svrc1,
+                               svrc100, gp0, gp1, gp2},
+      style sheet=strong colors,
+      trainingset={label in legend={text=Training set}},
+      testset={label in legend={text=Test set}},
+      svrc1={label in legend={text=\texttt{SVR C1}}},
+      svrc100={label in legend={text=\texttt{SVR C100}}},
+      gp0={label in legend={text=\texttt{GP [1, 2]}}},
+      gp1={label in legend={text=\texttt{GP [1e-1, 1]}}},
+      gp2={label in legend={text=\texttt{GP [1e-3, 1]}}},
+      x axis = {label=score},
+      y axis = {label=normalized reward},
+    ]
+    data[
+      headline={x, y},
+      set=trainingset,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_200_abstain/Trainingset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=testset,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_200_abstain/Testset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc1,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_200_abstain/SVRRBFC1.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc100,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_200_abstain/SVRRBFC100.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp0,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_200_abstain/GP[1,2].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp1,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_200_abstain/GP[1e-1,1].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp2,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_200_abstain/GP[1e-3,1].csv
+      }
+    ]
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \caption{Results from the \texttt{asymmetric 200 abstain} reward function.}
+  \end{figure}
+
+  \begin{figure}[H]
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+    \datavisualization[
+      scientific axes=clean,
+      visualize as line/.list={trainingset, testset, svrc1,
+                               svrc100, gp0, gp1, gp2},
+      style sheet=strong colors,
+      trainingset={label in legend={text=Training set}},
+      testset={label in legend={text=Test set}},
+      svrc1={label in legend={text=\texttt{SVR C1}}},
+      svrc100={label in legend={text=\texttt{SVR C100}}},
+      gp0={label in legend={text=\texttt{GP [1, 2]}}},
+      gp1={label in legend={text=\texttt{GP [1e-1, 1]}}},
+      gp2={label in legend={text=\texttt{GP [1e-3, 1]}}},
+      x axis = {label=score},
+      y axis = {label=normalized reward},
+    ]
+    data[
+      headline={x, y},
+      set=trainingset,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_1000_abstain/Trainingset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=testset,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_1000_abstain/Testset.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc1,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_1000_abstain/SVRRBFC1.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=svrc100,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_1000_abstain/SVRRBFC100.csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp0,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_1000_abstain/GP[1,2].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp1,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_1000_abstain/GP[1e-1,1].csv
+      }
+    ]
+    data[
+      headline={x, y},
+      set=gp2,
+      read from file={
+        ../experiments/usps_03/cp/asymetric_1000_abstain/GP[1e-3,1].csv
+      }
+    ]
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \caption{Results from the \texttt{asymmetric 1000 abstain} reward function.}
+  \end{figure}
+
