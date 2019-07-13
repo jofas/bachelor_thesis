@@ -152,36 +152,47 @@ local function result_tables()
       local i = 0
 
       for reward, v2 in pairs(v1) do
-        local line = {trans[reward]}
+        local line = {reward}
 
         for reg, rew in pairs(v2) do
           if i == 0 then
-            r[1][idx_reg[reg]] = "&"..trans[reg].." "
+            --r[1][idx_reg[reg]] = "&"..trans[reg].." "
+            r[1][idx_reg[reg]] = ";"..reg
           end
 
           line[idx_reg[reg] + 1] =
-            " &"..string.format("%.3f", rew)
+            ";"..string.format("%.3f", rew)
+            --" &"..string.format("%.3f", rew)
         end
 
         i = i + 1
         r[idx_reward[reward] + 1] = line
       end
 
-      print("\n"..ds.." "..scorer.."\n")
-
-      print([[\begin{table}]])
-      print([[{\scriptsize]])
-      print([[\begin{tabu}{l|l|l|l|l|l|l}]])
+      print(ds.." "..scorer)
       for _, x in pairs(r) do
         local line = ""
         for _, y in pairs(x) do
           line = line..y
         end
-        print(line..[[ \\]])
+        print(line)
       end
-      print([[\end{tabu} }]])
-      print([[\caption{ }]])
-      print([[\end{table}]])
+
+      --print("\n"..ds.." "..scorer.."\n")
+
+      --print([[\begin{table}]])
+      --print([[{\scriptsize]])
+      --print([[\begin{tabu}{l|l|l|l|l|l|l}]])
+      --for _, x in pairs(r) do
+      --  local line = ""
+      --  for _, y in pairs(x) do
+      --    line = line..y
+      --  end
+      --  print(line..[[ \\]])
+      --end
+      --print([[\end{tabu} }]])
+      --print([[\caption{ }]])
+      --print([[\end{table}]])
     end
   end
 end
