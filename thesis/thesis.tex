@@ -109,11 +109,39 @@ Overath, July 2019
 \end{titlepage}
 % }}}
 
-%\begin{abstract}%
-%\end{abstract}
+\begin{abstract}%
+This thesis discusses a reward setting applied to
+determining abstaining classifiers.
+Abstaining classifiers are part of reliable machine
+learning, which is applied in real world application
+domains where wrong predictions are very expensive,
+for example in medicine or finance.
+While a cost sensitive setting for determining abstaining
+classifiers is well known and researched, the reward
+setting this thesis is based on, is not.
 
-%\begin{keywords}
-%\end{keywords}
+This thesis describes the reward setting it is based on and
+proposes a general and flexible approach to determining
+abstaining classifiers from reward.
+Similarities to reinforcement learning---from which the
+idea of reward came---are shown.
+
+The proposed method is unstable and can produce non-optimal
+abstaining classifiers---a direct consequence of its
+generality and the small scope on which was experimented.
+The method is intended to be the underlying framework
+for more specialized and sophisticated methods, which are
+outlined in this thesis.
+
+While being unstable, empirical tests on real world data
+sets show that the proposed method can produce approximate
+optimal abstaining classifiers.
+\end{abstract}
+
+\begin{keywords}
+Abstaining classifiers, classification with rejection,
+reliable machine learning
+\end{keywords}
 
 % Introduction {{{
 \section{Introduction}
@@ -835,6 +863,7 @@ One could also reduce them by averaging their rewards, etc.
 
 % rl vs ac {{{
 \subsection{Equivalences to reinforcement learning}
+\label{subsec:rl_vs_ac}
 
 Using a reward system---like described above---to determine
 an abstaining classifier makes the whole process quite
@@ -1341,6 +1370,7 @@ $(0,1)$
 
 % regressors {{{
 \subsection{Regressors}
+\label{subsec:reg}
 
 Five different kernelized regressors where used in order
 to test whether using (\ref{eq:T_Reg}) to determine the
@@ -1471,6 +1501,7 @@ behavior.
 
 % }}}
 
+% further research {{{
 \section{Further research}
 \label{sec:further_research}
 
@@ -1481,7 +1512,8 @@ There must be more empirical studies on more elaborate
 reward settings in order to see where the method has its
 boundaries and how to improve on its stability.
 The presented method is very general and the goal of this
-thesis was to show its value in a basic setting.
+thesis was to present its flexible approach and to discuss
+its reward based setting.
 The idea was to present this method as a foundation for
 more specialized and stable methods, incorporating more
 knowledge about the domain and more statistical certainty.
@@ -1521,8 +1553,54 @@ increases the performance must be tested first.
 Another way to increase the performance could be to use
 an ensemble of regressors instead of just one to determine
 the best threshold, which also remains to be tested.
+In general how to chose a good regressor remains an open
+question not answered in this thesis.
+Like stated in Chapter~\ref{subsec:reg}, the regressors
+tested were just to see how different bias-variance
+trade-off settings perform.
+No tuning process was used to find a regressor that
+performs best, just a few parameters were set before the
+tests.
 
+A way to decrease training cost would be to replace the
+$k$-fold method with a calibration set.
+The underlying scoring classifier would be trained on a
+training set once and it would predict on the calibration
+set instead of splitting the training set into $k$
+partitions, resulting in $k$ times the cost of training
+the scoring classifier.
+This could be useful for big data sets and for scoring
+classifier that have a complex training operation, like
+support vector machines or neural nets.
+% }}}
+
+% conclusion {{{
 \section{Conclusion}
+
+The goal of this thesis was to discuss the general
+applicability of a reward based setting in order to define
+abstaining classifiers.
+This thesis also proposes a very general an flexible
+setting for defining such a system and to generate an
+abstaining classifier from it.
+The result of the generality of the method can be unstable
+and non-optimal abstaining classifiers, which is
+empirically shown on real-world data sets.
+On the other hand, the empirical study shows that despite
+unstable results the basic method is already applicable to
+some degree, producing in general abstaining classifier
+which are close to optimal.
+
+In Chapter~\ref{sec:further_research} unanswered questions
+are listed and ways to improve the proposed method are
+given.
+
+Hopefully the proposed method can be the general framework
+on which more specialized and sophisticated approaches are
+based and the reward setting of this thesis---and the
+resulting convergence of abstaining classifiers to
+reinforcement learning agents described in
+Chapter~\ref{subsec:rl_vs_ac}---will be further explored.
 
 \newpage
 
