@@ -2,7 +2,7 @@
 \usepackage{luacode}
 \usepackage{jmlr2e}
 \usepackage{amsmath}
-\usepackage[page]{appendix}
+\usepackage[toc,page]{appendix}
 \usepackage{xcolor}
 \usepackage[marginparsep=30pt]{geometry}
 \usepackage{stmaryrd}
@@ -109,9 +109,16 @@ Overath, July 2019
 \end{titlepage}
 % }}}
 
+\pagenumbering{Roman}
+
+% abstract {{{
+\hspace{0pt}
+\vfill
+
 \begin{abstract}%
-This thesis discusses a reward setting applied to
-determining abstaining classifiers.
+This thesis discusses how the abstention rule of an
+abstaining classifier can be determined based on a reward
+setting.
 Abstaining classifiers are part of reliable machine
 learning, which is applied in real world application
 domains where wrong predictions are very expensive,
@@ -120,11 +127,11 @@ While a cost sensitive setting for determining abstaining
 classifiers is well known and researched, the reward
 setting this thesis is based on, is not.
 
-This thesis describes the reward setting it is based on and
+This thesis describes the underlying reward setting and
 proposes a general and flexible approach to determining
 abstaining classifiers from reward.
 Similarities to reinforcement learning---from which the
-idea of reward came---are shown.
+idea of using reward instead of cost comes---are shown.
 
 The proposed method is unstable and can produce non-optimal
 abstaining classifiers---a direct consequence of its
@@ -143,6 +150,26 @@ Abstaining classifiers, classification with rejection,
 reliable machine learning
 \end{keywords}
 
+\vfill
+\hspace{0pt}
+% }}}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\listoffigures
+
+\newpage
+
+\listoftables
+
+\newpage
+
+\pagenumbering{arabic}
+
 % Introduction {{{
 \section{Introduction}
 \label{sec:intro}
@@ -154,32 +181,39 @@ classifier with reject option
 of confidence predictor.
 It can refuse from making a prediction if its confidence in
 the prediction is not high enough.
-High enough, in this context, means that the confidence is
-greater than a certain---hopefully optimal---threshold.
-Optimality is dependent on a performance metric set
-beforehand.
+An abstaining classifier has an abstention rule based on
+which it decides, whether it should return a prediction
+or abstain from it.
+The abstention rule should be close to optimal.
+Optimality is dependent on a performance metric---in this
+thesis called setting---set beforehand.
 
 This thesis introduces a new kind of method for
-approximating the optimal threshold based on a reward
+approximating the optimal abstention rule based on a reward
 function---better known from reinforcement learning than
 from the supervised learning setting
 \citep[see e.g.][Chapter 1]{sutton_et_al_2018}.
-The method treats the reward function as unknown, making it
-a very general approach and giving quite the amount of
-freedom in designing the reward function.
+The method treats the reward function mostly as unknown and
+only constraints it in one way; the reward function must
+assume that all examples it sees are independent and
+identically distributed (iid).
+This makes the reward setting a very general approach and
+gives quite the amount of freedom in designing the reward
+function, which describes the real world application domain
+of the abstaining classifier best.
 
-In supervised learning the concept that is closest to a
-reward function is a cost function and many abstract types
-of cost in supervised learning are known
+In supervised learning the concept that is closest to
+reward functions are cost functions. Many abstract types
+of cost in supervised learning, from which a cost function
+can be derived, are known
 \citep[see][]{turney_2000}.
 
-Probably today's most used methods for obtaining the
-optimal threshold for reducing the expected cost of an
-abstaining classifier are based on the receiver operating
-characteristic (ROC) rule
+Probably today's most used methods for obtaining an
+optimal abstention rule for reducing the expected cost of
+an abstaining classifier are based on the receiver
+operating characteristic (ROC) rule
 \citep[see][]{tortella_2000,pietraszek_2005,
   vanderlooy_et_al_2009, guan_et_al_2018}.
-
 The method presented in this thesis is more flexible than
 the methods based on the ROC rule and can---depending on
 the context of the classification problem---produce results
@@ -193,15 +227,27 @@ to multi-class classifiers for non-binary problems.
 
 On the other hand the presented method can suffer from its
 very general approach and only produces approximations.
-This can result in non-optimal and unstable thresholds.
+This can result in non-optimal and unstable abstention
+rules.
+Also, the abstention rule of an abstaining classifier that
+is optimized in the reward setting is weaker than the
+abstention rule of ROC based abstaining classifiers.
+
+The presented method is intended as an underlying
+framework for more sophisticated systems and only scratches
+at the possibilities of generating abstaining classifiers
+based on a reward setting.
 
 This thesis first presents a motivational example.
 In Chapter~\ref{sec:method} the proposed method is
-presented.
+presented and discussed.
+Also similarities of abstaining classifiers based on a
+reward setting to reinforcement learning agents are given.
 After that experiments on data sets from the UCI machine
 learning repository \citep[see][]{uci} are discussed.
-At last further research ideas are listed and a conclusion
-is drawn.
+Further research ideas and possible optimizations of the
+presented method are outlined afterwards.
+At last a conclusion is drawn.
 % }}}
 
 % Motivational example {{{
@@ -236,10 +282,10 @@ underlying process.
 Many real world application domains for abstaining
 classifiers can express a cost function associated to the
 decisions about predicting and abstaining of the
-classifier---which then chooses the threshold with which it
-produces the least amount of cost, therefore minimizing
-the cost of introducing the abstaining classifier to the
-process.
+classifier---which then chooses the abstention rule with
+which it produces the least amount of cost, therefore
+minimizing the cost of introducing the abstaining
+classifier to the process.
 
 For example, the real world application domain could be a
 facial recognition system at a company which regulates
@@ -258,8 +304,9 @@ which should be replaced by the facial recognition system.
 
 On the other hand, for some real world application domains
 a reward function based on which the abstaining classifier
-chooses the threshold by maximizing the reward---rather
-than minimizing the cost---comes more natural.
+chooses its abstention rule by maximizing the
+reward---rather than minimizing the cost---comes more
+natural.
 
 Such a domain would be the finance industry,
 where we often can associate a certain amount of money an
@@ -272,25 +319,26 @@ The bank requests information about the consumer from a
 credit bureau in order to assess the consumer's credit
 default risk.
 Now the bank wants to predict the consumer's credit
-default risk based on information the bank has about the
+default risk based on information it has about the
 consumer.
 If the credit default risk is very high or very low the
 bank can save money not making a request to the credit
 bureau for this consumer.
-The optimal threshold for the abstaining classifier making
-the prediction about the credit default risk can easily be
-expressed by a reward function.
+The optimal abstention rule for the abstaining classifier
+making the prediction about the credit default risk can
+easily be determined by a reward function.
 Every correct decision saves the bank the money the request
 to the credit bureau costs.
 Every miss-classification costs the bank either the amount
 of money it would gain by granting the credit, or the
 money it loses by giving a credit to somebody that does not
-pay the rates.
+pay the installments.
 Abstention cost is the cost of making a request to the
-credit bureau.
+credit bureau, if the abstaining classifier rejects the
+prediction.
 
 Using a reward function---like in the example
-above---instead of a cost function has an advantage in
+above---instead of a cost function---has an advantage in
 readability. One can easily assess the gain of introducing
 the abstaining classifier to the process.
 Is the reward generated by the abstaining classifier higher
@@ -307,7 +355,7 @@ consumer's credit default risk.
 \label{sec:method}
 
 Let $\textbf{X}$ be the observation space and $\textbf{Y}$
-the label space. $|\textbf{Y}| < \infty$ since only
+the label space. $|\textbf{Y}| < \infty$, since only
 classification is discussed. Let $\textbf{Z}$ be the
 cartesian product of $\textbf{X}$ and $\textbf{Y}$:
 $\textbf{Z} := \textbf{X} \times \textbf{Y}$.
@@ -397,9 +445,9 @@ Let $\S$ be the set of all scoring classifiers defined like
 The proposed method is interested in transforming a
 scoring classifier $S \in \S$ to an abstaining classifier
 $A$.
-In order to do that a threshold $T \in \mathbb{R}$ is
-defined and $A$ can be represented as a composition of $S$
-and $T$.
+In order to do that a threshold $T \in \mathbb{R}$---the
+abstention rule of $A$---is defined and $A$ can be
+represented as a composition of $S$ and $T$.
 Let $S_{\ds}$ be a scoring classifier which produces scores
 in ascending order, $T$ a threshold and $x$ an observation
 to be predicted.
@@ -413,9 +461,10 @@ predicts $x$ as follows:
       \bot &\qquad \text{if } v(S_{\ds}, x) < T
     \end{cases}.
 \end{align}
-The equivalent $A$ if $S_{\ds}$ is a scoring classifier
-that produces scores in descending order just exchanges the
-comparison operators with their respective opposite:
+The equivalent $A$ defined for a scoring classifier
+$S_{\ds}$ that produces scores in descending order just
+exchanges the comparison operators with their respective
+opposite:
 \begin{align}
   \label{eq:A2}
   A(\ds, x) =
@@ -425,9 +474,9 @@ comparison operators with their respective opposite:
     \end{cases}.
 \end{align}
 
-This representation of $A$ is rather unconventional and
-is one reason the proposed method is unstable.
-
+A single threshold as abstention rule is rather
+unconventional and is one reason the proposed method is
+unstable.
 Using a single threshold for all labels is a strong
 constraint to put onto the scoring classifier, because it
 must be invariant to the label distribution.
@@ -435,16 +484,16 @@ Imagine a classification problem where one label makes up
 90 percent of all examples and the scoring classifier is
 not invariant to the label distribution.
 This could lead the classifier to produce higher scores for
-observations with the label which makes up 90 percent.
-This could result in an abstaining classifier that does not
-predict an any example which does not have the dominant
+observations with the label, which makes up 90 percent.
+The result could be an abstaining classifier that does not
+predict any examples which do not have the dominant
 label, even though with such a distribution predicting
 the submissive labels would probably be more interesting.
 
 ROC based and other methods for generating abstaining
 classifiers address this problem by using abstention
-windows instead of a single threshold
-\citep[see][]{friedel_et_al_2006}.
+windows instead of a single threshold as their abstention
+rule \citep[see][]{friedel_et_al_2006}.
 
 Let $\Y$ be a binary problem $\Y := \{P, N\}$,
 where $P$ is called the positive label and $N$ the
@@ -453,13 +502,13 @@ The margin $m: \Y \times \mathbb{R} \rightarrow (-1,1)$ is
 a function that combines the label with the confidence
 value and returns a number in the interval of $(-1,1)$.
 The closer the return value of $m$ is to the edges of the
-interval, the more confident the scoring classifier is,
-whereby -1 means perfectly confident the label is $N$ and 1
+interval, the more confident the scoring classifier is.
+-1 means perfectly confident the label is $N$ and 1
 means perfectly confident the label is $P$
 \citep[see][]{friedel_et_al_2006}.
 
 In \citet{guan_et_al_2018} a similar method is described,
-constraining the output of the margin $m$ not on $(-1,1)$
+constraining the output of the margin $m$ not on $(-1,1)$,
 but instead using only the likelihood of an observation $x$
 having the positive label $P$
 ($m: \mathbb{R} \rightarrow (0,1)$).
@@ -467,7 +516,7 @@ having the positive label $P$
 Both \citet{friedel_et_al_2006} and \citet{guan_et_al_2018}
 define an abstention window $a$ as a tuple
 $a := (t_1, t_2); t_1 < t_2$ with two thresholds.
-An abstaining classifier of the form described in
+An abstaining classifier of the form defined in
 (\ref{eq:A}) with an abstention window instead of a
 threshold predicts an observation $x$ as:
 \begin{align*}
@@ -513,10 +562,10 @@ Chapter~\ref{sec:further_research}.
 
 The novel approach of this thesis is using a system based
 on reward which is maximized rather then cost that is
-minimized in order to determine the optimal threshold for
-abstention.
-Like stated in Chapter~\ref{sec:intro} using a reward
-function---like used in reinforcement learning---in a
+minimized in order to determine the optimal abstention
+rule for abstaining classifiers.
+Like stated in Chapter~\ref{sec:intro}, using a reward
+function---like in reinforcement learning---in a
 supervised learning setting is rather uncommon.
 In Chapter~\ref{sec:intro} and Chapter~\ref{sec:example}
 some reasons why using reward instead of cost are given.
@@ -558,7 +607,9 @@ and whether $\rho$ is stateful or stateless
                 &\multicolumn{1}{c|}{false} \\ \cline{2-3}
   \end{tabu}
   \end{center}
-  \caption{Possible combinations of the two known
+  \caption[Possible combinations of the two known
+           properties of a reward function.]
+          {Possible combinations of the two known
            properties of a reward function. It is not
            possible to have a stateful single step reward
            function, because a single step reward function
@@ -580,8 +631,8 @@ binary abstaining classifier is defined as
 \end{align*}
 A cost function $c$ with the same definition as
 (\ref{eq:rho}) based on such a cost matrix $C$ would be
-defined as $c(\vec{t}, \vec{p}) = [C(t_i, p_i);
-i=1,\dots,|\vec{t}|]^T$ and is basically the inverse of a
+defined as $c(\vec{t}, \vec{p}) = [i=1,\dots,|\vec{t}|:
+C(t_i, p_i)]^T$ and is basically the inverse of a
 single step reward function---with the difference that
 $C(P, P)$ and $C(N, N)$ normally do not have a gain
 associated to them, because then the cost matrix would not
@@ -593,7 +644,7 @@ A reward function that returns already accumulated rewards
 provides an even more flexible setting than single step
 reward---which is only dependent on one example's true and
 predicted label---because it can introduce the concept of
-state \citep[see][Chapter 1]{sutton_et_al_2018}.
+state in itself \citep[see][Chapter 1]{sutton_et_al_2018}.
 
 For example, the abstaining classifier could be a bettor
 betting on the outcome of a card game.
@@ -607,7 +658,7 @@ loses.
 It gains a certain amount---depending on how much money the
 classifier owns after the last match it has bet on---if
 it decides to bet on the current match and does so
-correctly or loses two thirds of its reward up to the
+correctly. It loses two thirds of its reward up to the
 current bet if the classifier was wrong.
 A reward function like this is not stateless like a
 single step reward function and is a commonly used
@@ -624,7 +675,7 @@ between the two concepts, but the interaction with the
 environment seems to be a good point for differentiation.
 If the predictions of the abstaining classifier alter
 reality (the predictions of the bettor above most certainly
-would change reality) it behaves like an agent, otherwise
+would change reality), it behaves like an agent, otherwise
 it is just an abstaining classifier.
 
 An argument for such a differentiation would be, that
@@ -638,6 +689,10 @@ and identically distributed) \citep[see][]{clauset_2011}
 and makes the concept of state irrelevant to our
 observations, which would not be the case if the
 predictions alter reality.
+The reward function must always assume, that observations
+are iid; it can not introduce state to the observation
+space, only to itself---the reward, like in the bettor
+example.
 % }}}
 
 % Method {{{
@@ -663,7 +718,7 @@ values generated by $M$ using the ROC isometrics approach
 
 An abstaining classifier $A$---defined like (\ref{eq:A}) or
 (\ref{eq:A2})---in the reward based
-setting described above can also be described as a
+setting described above, can also be described as a
 combined classifier $A := \text{\textit{S:Reg}}$.
 $S$ is a scoring classifier defined like (\ref{eq:S}) and
 $Reg$ is a regressor (defined like (\ref{eq:D}) with
@@ -694,7 +749,7 @@ Algorithm~\ref{alg:method}, line 2]{hastie_et_al_2009}.
 
   \quad $S$: a socring classifier,
 
-  \quad $\rho$: a stateless reward function defined like
+  \quad $\rho$: a reward function defined like
         (\ref{eq:rho}),
 
   \quad data set: $\ds$,
@@ -728,7 +783,8 @@ Algorithm~\ref{alg:method}, line 2]{hastie_et_al_2009}.
     \STATE{sort $P$ based on the scores. In ascending order
            if $S$ returns ascending scores. Otherwise in
            descending order}
-    \STATE{$R := \text{scores from } P \times \rho(P)$}
+    \STATE{$R := \text{scores from } P \times \rho(P_{i1},
+           P_{i2}); i=1,\dots,n$}
     \IF{$\rho$ is a single step reward function}
       \STATE{accumulate reward in $R$}
     \ENDIF
@@ -758,7 +814,7 @@ If $S$ produces scores in ascending order $P$ is also
 sorted in ascending order, otherwise in descending order.
 This is done in order to simplify reward accumulation,
 since the problem of finding the reward at a certain
-threshold is reduces to just taking all elements from $P$
+threshold is reduced to just taking all elements from $P$
 which come first in the sequence.
 The reward from the first two columns of $P$---with a
 reward function $\rho$ defined like (\ref{eq:rho})---is
@@ -771,7 +827,7 @@ Every reward is related to an element from $P$ and the
 reward is combined with the scores from $P$ to build the
 reward points $R$. $R$ can be represented as a matrix
 $R: n \times 2$, where the first column contains all scores
-and the second column contains the associated reward.
+and the second column contains the associated reward:
 \begin{align*}
   R :=
     \begin{pmatrix}
@@ -784,7 +840,7 @@ and the second column contains the associated reward.
 
 If $\rho$ is a single step reward function the rewards
 are accumulated.
-Since $R$ is sorted based on the scores the reward at a
+Since $R$ is sorted based on the scores, the reward at a
 single point is the sum of all rewards previously seen.
 The accumulated version of $R$ is
 $R^\prime := [(s_i, \sum_{j=1}^{i} r_j); i=1,\dots,n]^T$
@@ -803,41 +859,7 @@ all scores generated from $S$ during the training:
   T := \argmax_{s | \min C \leq s \leq \max C} Reg(s).
 \end{align}
 
-% reduce R {{{
-\begin{figure}
-  \begin{center}
-    \begin{tikzpicture}
-      \matrix (m0)
-      {
-        \node{$s_i$}; &\node{$r_i$}; &[2cm]\node{$s_i$};
-                                     &\node{$r_i$}; \\
-        \node{0.98};  &\node{1}; & &\\
-        \node{0.98};  &\node{2}; &\node{0.98}; &\node{2};\\
-        \node{0.97};  &\node{3}; & &\\
-        \node{0.97};  &\node (x) {2}; & &\\
-        \node{0.97};  &\node{1}; &\node{0.97}; &\node{1};\\
-        \node{0.96};  &\node{0};&\node{0.96};  &\node{0};\\
-      };
-      \node[right=0.7 of x]{$\Rightarrow$};
-    \end{tikzpicture}
-  \end{center}
-  \caption{An example for reducing $R$ built from a
-           single-step reward function which gives $+1$ for
-           a correct prediction and $-1$ for a false one.
-           $R$ is already accumulated.
-           If $T$ would be determined from the unreduced
-           $R$, $0.97$ would be the optimal threshold,
-           because it is $\argmax_{r_i} R$. The problem is
-           that two errors produced by the scoring
-           classifier for examples with the same
-           certainty $0.97$ are concealed. Reducing $R$
-           to only the last element of each score makes
-           certain that no concealing can happen.}
-  \label{fig:reduce}
-\end{figure}
-% }}}
-
-If $Reg$ is not defined $T$ could be derived from $R$
+If $Reg$ is not defined, $T$ could be derived from $R$
 by taking the score which has the highest associated
 reward
 \begin{align}
@@ -859,6 +881,42 @@ most information about the reward
 (see Figure~\ref{fig:reduce}).
 One could also reduce them by averaging their rewards, etc.
 
+% reduce R {{{
+\begin{figure}
+  \begin{center}
+    \begin{tikzpicture}
+      \matrix (m0)
+      {
+        \node{$s_i$}; &\node{$r_i$}; &[2cm]\node{$s_i$};
+                                     &\node{$r_i$}; \\
+        \node{0.98};  &\node{1}; & &\\
+        \node{0.98};  &\node{2}; &\node{0.98}; &\node{2};\\
+        \node{0.97};  &\node{3}; & &\\
+        \node{0.97};  &\node (x) {2}; & &\\
+        \node{0.97};  &\node{1}; &\node{0.97}; &\node{1};\\
+        \node{0.96};  &\node{0};&\node{0.96};  &\node{0};\\
+      };
+      \node[right=0.7 of x]{$\Rightarrow$};
+    \end{tikzpicture}
+  \end{center}
+  \caption[An example for reducing $R$.]
+          {An example for reducing $R$ built from a
+           single-step reward function which gives $+1$ for
+           a correct prediction and $-1$ for a false one.
+           $R$ is already accumulated.
+           If $T$ would be determined from the unreduced
+           $R$, $0.97$ would be the optimal threshold,
+           because it has the highest associated reward,
+           determined like (\ref{eq:T_R}). The problem is
+           that two errors produced by the scoring
+           classifier for examples with the same
+           certainty $0.97$ are concealed. Reducing $R$
+           to only the last element of each score makes
+           certain that no concealing can happen.}
+  \label{fig:reduce}
+\end{figure}
+% }}}
+
 % }}}
 
 % rl vs ac {{{
@@ -873,7 +931,7 @@ which makes a reinforcement learning agent and an
 abstaining classifier look alike, but also shows where
 both concepts differ.
 
-A reinforcement learning agent, also called the autonomous
+A reinforcement learning agent, also called an autonomous
 agent, observes---for each (time-)step $t$---a state $s_t$
 from its environment.
 Based on $s_t$ the autonomous agent takes an action $a_t$
@@ -901,8 +959,8 @@ classifier is bound to the already observed data and can
 only try to generalize from the previous observations to
 unseen ones.
 The equivalent of the abstaining classifier to the policy
-of the agent would be its threshold $T$ (see
-Table~\ref{tab:rl_vs_ac}).
+of the agent would be its abstention rule---the threshold
+$T$ (see Table~\ref{tab:rl_vs_ac}).
 
 The most obvious difference is that the agent actively
 interacts with the environment, while the abstaining
@@ -918,7 +976,7 @@ by the abstaining classifier
 
 \begin{table}
   \begin{center}
-  \begin{tabu}{l|l}
+  \begin{tabu}{l|X}
     reinforcement learning agent &abstaining classifier \\
     \hline
     state $s_i$ &observation $x_i$ \\
@@ -949,7 +1007,7 @@ on real-world data sets from the UCI machine learning
 repository \citep[see][]{uci}.
 
 The configuration contains two different scoring
-classifiers, eighteen reward functions and 5
+classifiers, eighteen reward functions and five
 regressors---approximating the optimal threshold like
 (\ref{eq:T_Reg})---plus the bare threshold derived like
 (\ref{eq:T_R}).
@@ -1012,7 +1070,7 @@ The last data set tested was the wine quality data set%
 \footnote{\url{https://archive.ics.uci.edu/ml/datasets/%
   Wine+Quality}} (\texttt{wine}).
 Each example represents a sample of ``vinho verde'' from
-northern Portuguese.
+northern Portugal.
 The twelve attributes are physicochemical properties of the
 sampled wine which are mapped to a sensory output---the
 quality of the wine from zero to ten.
@@ -1062,8 +1120,8 @@ The conformal predictor \texttt{cp} was modified to being a
 scoring classifier like (\ref{eq:S}), which produces scores
 in descending order.
 Refer to \citet{fassbender_2019} for more information on
-how to modify a conformal predictor to being a scoring
-classifier.
+how to derive an abstaining classifier from  a conformal
+predictor.
 
 A conformal predictor uses an underlying nonconformity
 measure $N:\Z^* \times \Z \rightarrow \mathbb{R}$ to
@@ -1079,7 +1137,7 @@ $d(x_i, x)$ is the euclidean distance in the observation
 space between $x_i$ and $x$. It divides the closest
 distance to an example with the same label with the
 closest distance to an example with another label
-\citep[see][]{fassbender_2019}.
+\citep[see][]{alrw, fassbender_2019}.
 
 The nonconformity score is then transformed to a p-value
 in order to see how well the example conforms to the
@@ -1090,7 +1148,7 @@ computed as
 \begin{align*}
   \frac{|\{i=1,\dots,n+1: \alpha_i \geq \alpha\}|}{n + 1}.
 \end{align*}
-The higher the p-value the more conforms $z$ with the
+The higher the p-value, the more conforms $z$ with the
 previous seen examples and the confidence is high that the
 prediction is correct.
 
@@ -1113,7 +1171,7 @@ $[(0,\frac{1}{2}), (1,\frac{3}{10}), (2,\frac{1}{5})]$.
 
 \texttt{rf} transforms the probability predictions to
 complementary probabilities in order to make it a scoring
-classifier that produces scores in descending order like
+classifier that produces scores in descending order, like
 \texttt{cp}.
 
 The scoring classifier is based on the implementation from
@@ -1141,7 +1199,7 @@ and $M^{1000}$ were generated randomly\footnote{%
   Python standard library was used
   \citep[see][Chapter 9.6]{python}.}
 beforehand; each with a different degree of freedom in
-range which is denoted by the subscripts.
+range which is denoted by the superscripts.
 Each matrix was generated with $11 \times 11$ elements.
 Every row and every column is associated to one element
 in $\Y$ for each data set.
@@ -1155,24 +1213,24 @@ first two rows and the first two columns, while
 For $M^{50}$, $M^{200}$ and $M^{1000}$ refer to
 Appendix~\ref{sec:asym_rew_mat}.
 
-Below all tested reward functions with their definitions
+Below, all tested reward functions with their definitions
 are listed.
 All, except the reward functions
 which add an abstention cost to abstained predictions,
 are single step and therefore stateless reward functions.
 The reward functions which add an abstention cost are
-stateful and return accumulated reward.
+also stateless, but return accumulated reward.
 Abstaining cost is easily integrated in a reward function,
 since its input vectors are ordered after the score.
-Every element is assumed to represent the threshold (which
-is why the reward function is considered stateful), each
+Every element is assumed to represent the threshold; each
 element that comes after is abstained and a cost for each
 is substituted from the reward of the element.
-In the tested reward function, abstention cost were set to
-1 for each abstained example, resulting in abstention costs
-of $|\vec{t}| - i$, $i$ being the index of the element
-for which the reward is computed, $\vec{t}$ being the
-vector of true labels from the parameters.
+In the tested reward function, abstention cost was set to
+1, for each abstained example, resulting in abstention
+costs of $|\vec{t}| - i$, $i$ being the index of the
+element for which the reward is computed, $\vec{t}$ being
+the vector of true labels from the parameters, $|\vec{t}|$
+the size of the vector.
 
 The tested reward functions are:
 
@@ -1364,7 +1422,7 @@ The tested reward functions are:
 
 $RND(0,1)$ is a function returning a pseudo random value
 from the uniform distribution constrained on the interval
-$(0,1)$
+$(0,1)$.
 
 % }}}
 
@@ -1380,7 +1438,7 @@ deriving the threshold like (\ref{eq:T_R}).
 
 Three regressors, \texttt{GP [1e-3, 1]},
 \texttt{GP [1e-1, 1]} and \texttt{GP [1, 2]} are based on
-a Gaussian process, while \texttt{SVR C1} and
+Gaussian processes, while \texttt{SVR C1} and
 \texttt{SVR C100} are based on support vector regression
 \citep[see e.g.][Chapters 14, 15]{murphy_2012}.
 
@@ -1393,7 +1451,7 @@ a RBF kernel defined like
 \end{align}
 $c$ being a constant optimized during training and $l$ is
 called the length scale, also optimized during training.
-For each regressor $c$ is bound to the interval
+For each regressor, $c$ is bound to the interval
 $[0.001, 100]$, while the length scale is bound to the
 interval in the regressor's name.
 The different intervals are designed to generate regressors
@@ -1430,7 +1488,7 @@ the scikit-learn library \citep[see][]{sklearn_api}.
 The settings of the experiments were all the same.
 It was tested how well abstaining classifiers (in this
 case defined as (\ref{eq:A2}), since both underlying
-scoring classifier produce scores with descending order)
+scoring classifiers produce scores with descending order)
 with different thresholds determined by
 Algorithm~\ref{alg:method} with different settings
 (described above) performed. $k$ was always set to five and
@@ -1495,7 +1553,7 @@ set.
 \input{queries}
 
 These utter failures are the reason why this method can not
-be called stable and more research must be performed in
+be called stable and more research must be done, in
 order to acquire more knowledge on how to avoid such faulty
 behavior.
 
@@ -1520,7 +1578,7 @@ knowledge about the domain and more statistical certainty.
 Also, the context of this method must be improved,
 adding the performance of the underlying scoring classifier
 as another point for increasing stability through knowledge
-of the system.
+of the whole system.
 
 While even for asymmetric and random reward functions the
 abstaining classifiers trained in
@@ -1544,16 +1602,16 @@ is called a taxonomy \citep[see][Chapter 2]{cprml}.
 The idea would be to use such a taxonomy to categorize
 examples and to define a threshold per category, instead of
 one threshold for all examples.
-This could lead to finer tuned abstaining classifiers,
-hopefully increasing their performance.
-If this method could increase stateful reward functions
-remains an open question and if using such a taxonomy
-increases the performance must be tested first.
+This would extend the abstention rule of the abstaining
+classifier to $|\K|$ thresholds.
+The result could be finer tuned abstaining classifiers,
+hopefully increasing their performance, which must be
+tested.
 
 Another way to increase the performance could be to use
 an ensemble of regressors instead of just one to determine
 the best threshold, which also remains to be tested.
-In general how to chose a good regressor remains an open
+In general, how to chose a good regressor remains an open
 question not answered in this thesis.
 Like stated in Chapter~\ref{subsec:reg}, the regressors
 tested were just to see how different bias-variance
@@ -1568,10 +1626,10 @@ The underlying scoring classifier would be trained on a
 training set once and it would predict on the calibration
 set instead of splitting the training set into $k$
 partitions, resulting in $k$ times the cost of training
-the scoring classifier.
-This could be useful for big data sets and for scoring
-classifier that have a complex training operation, like
-support vector machines or neural nets.
+the underlying scoring classifier.
+This could be useful approach for big data sets and for
+scoring classifiers, that have a complex training
+operation, like support vector machines or neural nets.
 % }}}
 
 % conclusion {{{
@@ -1580,15 +1638,15 @@ support vector machines or neural nets.
 The goal of this thesis was to discuss the general
 applicability of a reward based setting in order to define
 abstaining classifiers.
-This thesis also proposes a very general an flexible
+This thesis also proposes a very general and flexible
 setting for defining such a system and to generate an
 abstaining classifier from it.
 The result of the generality of the method can be unstable
 and non-optimal abstaining classifiers, which is
 empirically shown on real-world data sets.
-On the other hand, the empirical study shows that despite
-unstable results the basic method is already applicable to
-some degree, producing in general abstaining classifier
+On the other hand, the empirical study shows, that despite
+unstable results, the basic method is already applicable to
+some degree, producing in general abstaining classifiers,
 which are close to optimal.
 
 In Chapter~\ref{sec:further_research} unanswered questions
@@ -1601,12 +1659,12 @@ based and the reward setting of this thesis---and the
 resulting convergence of abstaining classifiers to
 reinforcement learning agents described in
 Chapter~\ref{subsec:rl_vs_ac}---will be further explored.
+% }}}
 
 \newpage
 
-\renewcommand{\appendixpagename}{}
+\renewcommand{\appendixpagename}{\Large Appendices}
 \begin{appendices}
-  \section*{Appendix}
 
   \section{Metrics per reward function}
   \label{sec:metrics_rew}
@@ -1623,7 +1681,7 @@ Chapter~\ref{subsec:rl_vs_ac}---will be further explored.
   \newpage
 
   \section{Plots from the \texttt{usps} data set with
-    \texttt{cp} as scoring classifier}
+           \texttt{cp} as scoring classifier}
   \label{sec:plots}
 
   \input{plots}
@@ -1683,10 +1741,12 @@ Chapter~\ref{subsec:rl_vs_ac}---will be further explored.
 \end{appendices}
 
 \bibliography{thesis.bib}
+\addcontentsline{toc}{section}{References}
 
 \newpage
 \section*{Erklärung}
-%\markboth{Erklärung}{Erklärung}\addcontentsline{toc}{section}{Erklärung}
+%\markboth{Erklärung}{Erklärung}
+\addcontentsline{toc}{section}{Erkl\"arung}
 Ich versichere, die von mir vorgelegte Arbeit
 selbstst\"andig verfasst zu haben.
 Alle Stellen, die w\"ortlich oder sinngem\"a{\ss} aus
